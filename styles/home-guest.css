@@ -1,0 +1,47 @@
+.nav-login {
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+}
+
+.nav-login form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nav-login form input {
+    padding: 5px;
+    min-height: 25px;
+    border-radius: 5px;
+    border: 1px solid rgba(var(--text-color), 0.5);
+}
+
+.nav-login a, .nav-login button {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid rgba(var(--text-color), 0.5);
+    background: var(--accent-color);
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+    .nav-login {
+        flex-direction: row;
+    }
+
+    .nav-login form {
+        flex-direction: row;
+    }
+
+    .nav-login form input {
+        width: 100px;
+    }
+
+    .nav-login a {
+        width: 100px;
+    }
+    
+}

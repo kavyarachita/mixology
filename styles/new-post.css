@@ -1,0 +1,44 @@
+.new-post form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 700px;
+}
+
+.new-post form div {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+}
+
+.new-post form input {
+    padding: 5px;
+    min-height: 25px;
+    border-radius: 5px;
+    border: 1px solid rgba(var(--text-color), 0.5);
+    width: 100%;
+}
+
+.new-post form ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.new-post form ul li {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+}
+
+.new-post form button {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid rgba(var(--text-color), 0.5);
+    background: var(--accent-color);
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}

@@ -1,8 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Kavya Annapareddy"/>
+    <meta name="description" content="Mixology is a social media platform for drink enthusiasts to share their recipes with other passionate individuals."/>
     <title>Mixology - Home</title>
-    <link rel="stylesheet" href="styles/base-two.css" />
+    <link rel="stylesheet" href="styles/base.css" />
 </head>
 
 <body>
@@ -13,16 +18,16 @@
                 <form class="search-form">
                     <input type="text" class="search-bar" placeholder="Search..." />
                     <button class="btn search-button">
-                        <img src="assets/icons/search.svg" alt="Search Icon" />
+                        <img src="assets/icons/search.svg" alt="Search Icon" class="icon" />
                     </button>
                 </form>
-                <div class="profile">
+                <a class="profile" href="profile.html">
                     <img class="profile-icon" src="assets/user-48.png" alt="User Icon" />
-                    <a class="profile-link" href="profile.html">Username</a>
-                </div>
+                    <p>Username</p>
+                </a>
             </div>
         </div>
-        <nav class="sidebar">
+        <nav>
             <div>
                 <a class="logo-link" href="index.html">
                     <img src="assets/logo-md.svg" alt="Logo" />
@@ -63,12 +68,15 @@
                     </ul>
                 </div>
             </div>
-            <div class="misc-links">
-                <a href="#">About</a>
-                <a href="#">
-                    <img src="assets/icons/help.svg" alt="Help Icon" class="icon" />
-                </a>
-                <a href="#">Contact</a>
+            <div class="nav-footer">
+                <div class="misc-links">
+                    <a href="#">About</a>
+                    <a href="#">
+                        <img src="assets/icons/help.svg" alt="Help Icon" class="icon" />
+                    </a>
+                    <a href="#">Contact</a>
+                </div>
+                <p class="copyright">&copy; 2025 Mixology.</p>
             </div>
         </nav>
         <div class="content">
@@ -93,9 +101,12 @@
                     </div>
                 </div>
             </div>
+            <footer>
+                <a href="#top">Back to Top</a>
+                
+            </footer>
         </div>
     </div>
-
 </body>
 
 </html>

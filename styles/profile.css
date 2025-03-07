@@ -1,0 +1,53 @@
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+    justify-content: start;
+}
+
+.profile-header img {
+    width: 100px;
+    height: 100px;
+}
+
+.follow-btn, .follow-btn.following:hover  {
+    background-color: var(--accent-color);
+    color: var(--background-color);
+}
+
+.follow-btn:hover, .follow-btn.following  {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+}
+
+.profile-stats {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.profile-stats p {
+    margin: 0;
+}
+
+.profile-stats .stat {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.profile-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}

@@ -45,6 +45,11 @@ h1, h2, h3, h4, h5, h6{
     /* z-index: -999; */
 }
 
+.icon{
+    width: 30px;
+    height: 30px;
+}
+
 /* HEADER */
 
 .header {
@@ -126,6 +131,11 @@ h1, h2, h3, h4, h5, h6{
     color: var(--text-color);
 }
 
+/* .profile-icon {
+    width: 30px;
+    height: 30px;
+} */
+
 /* SIDEBAR */
 
 nav {
@@ -200,11 +210,6 @@ nav .misc-links {
     justify-content: space-between;
     align-items: center;
     gap: 5px;
-}
-
-nav .icon {
-    width: 30px;
-    height: 30px;
 }
 
 .copyright {
@@ -352,6 +357,24 @@ form input[type="submit"] {
     padding: 5px 10px;
     background-color: var(--btn-secondary);
     border: 3px solid var(--btn-secondary);
+}
+
+/* SEARCH RESULTS */
+.results .card {
+    display: none;
+}
+
+/* ALERT */
+
+.alert {
+    padding: 10px;
+    margin: 20px 20px 20px 250px;
+    display: none;
+    border-radius: 10px;
+    font-weight: bold;
+    text-align: center;
+    background-color: var(--secondary-color);
+    color: var(--btn-secondary);
 }
 
 /* SCREEN < 992px width or 600px height */

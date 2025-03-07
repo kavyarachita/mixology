@@ -9,17 +9,19 @@
     <title>Mixology - Explore</title>
     <link rel="stylesheet" href="styles/base.css" />
     <link rel="stylesheet" href="styles/index.css" />
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/scripts.js"></script>
 </head>
 
 <body>
     <div class="container">
         <div class="header">
             <div class="header-content">
-                <form class="search-form">
-                    <input type="text" class="search-bar" placeholder="Search..." />
-                    <button class="btn search-button">
+                <form class="search-form" method="get" action="search-results.html">
+                    <input type="text" class="search-bar" placeholder="Search..." name="query"/>
+                    <input class="btn search-button" type="submit">
                         <img src="assets/icons/search.svg" alt="Search Icon" class="icon" />
-                    </button>
+                    </input>
                 </form>
                 <div class="login-btns">
                     <a class="btn btn-secondary" href="auth-index.html">Login</a>
@@ -45,11 +47,11 @@
             </div>
             <div class="nav-footer">
                 <div class="misc-links">
-                    <a href="#">About</a>
+                    <a href="about.html">About</a>
                     <a href="#">
                         <img src="assets/icons/help.svg" alt="Help Icon" class="icon" />
                     </a>
-                    <a href="#">Contact</a>
+                    <a href="contact.html">Contact</a>
                 </div>
                 <p class="copyright">&copy; 2025 Mixology.</p>
             </div>
@@ -74,6 +76,7 @@
                     <img src="assets/icons/close.svg" alt="Deselect Filter Icon"/>
                 </div>
             </div>
+            <div class="alert"></div>
             <div class="cards-container">
                 <div class="card" href="drink.html">
                     <img class="card-img" src="assets/drink-6.jpg" alt="Drink Image" />
@@ -81,8 +84,8 @@
                       <h2>Matcha Latte</h2>
                       <a class="user-info" href="other-profile.html">
                         <img
-                          class="user-icon"
-                          src="assets/user-48.png"
+                          class="icon user-icon"
+                          src="assets/icons/user.svg"
                           alt="User Icon"
                         />
                         <p>Wanda Maximoff</p>
@@ -96,8 +99,8 @@
                       <h2>Matcha Latte</h2>
                       <a class="user-info" href="other-profile.html">
                         <img
-                          class="user-icon"
-                          src="assets/user-48.png"
+                          class="icon user-icon"
+                          src="assets/icons/user.svg"
                           alt="User Icon"
                         />
                         <p>Wanda Maximoff</p>
@@ -111,8 +114,8 @@
                       <h2>Matcha Latte</h2>
                       <a class="user-info" href="other-profile.html">
                         <img
-                          class="user-icon"
-                          src="assets/user-48.png"
+                          class="icon user-icon"
+                          src="assets/icons/user.svg"
                           alt="User Icon"
                         />
                         <p>Wanda Maximoff</p>

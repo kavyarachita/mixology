@@ -9,20 +9,22 @@
     <title>Mixology - My Profile</title>
     <link rel="stylesheet" href="styles/base.css" />
     <link rel="stylesheet" href="styles/profile.css" />
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/scripts.js"></script>
 </head>
 
 <body>
     <div class="container">
         <div class="header">
             <div class="header-content">
-                <form class="search-form">
-                    <input type="text" class="search-bar" placeholder="Search..." />
-                    <button class="btn search-button">
+                <form class="search-form" method="get" action="search-results.html">
+                    <input type="text" class="search-bar" placeholder="Search..." name="query"/>
+                    <input class="btn search-button" type="submit">
                         <img src="assets/icons/search.svg" alt="Search Icon" class="icon" />
-                    </button>
+                    </input>
                 </form>
                 <a class="profile" href="profile.html">
-                    <img class="profile-icon" src="assets/user-48.png" alt="User Icon" />
+                    <img class="icon profile-icon" src="assets/icons/user.svg" alt="User Icon" />
                     <p>Username</p>
                 </a>
             </div>
@@ -70,23 +72,24 @@
             </div>
             <div class="nav-footer">
                 <div class="misc-links">
-                    <a href="#">About</a>
+                    <a href="about.html">About</a>
                     <a href="#">
                         <img src="assets/icons/help.svg" alt="Help Icon" class="icon" />
                     </a>
-                    <a href="#">Contact</a>
+                    <a href="contact.html">Contact</a>
                 </div>
                 <p class="copyright">&copy; 2025 Mixology.</p>
             </div>
         </nav>
         <div class="content">
+            <div class="alert"></div>
             <div class="profile-container">
                 <div class="profile-header">
-                    <img class="profile-image" src="assets/user-48.png" alt="User Icon" />
-                    <h1 class="profile-name">Username</h1>
+                    <div class="profile-info">
+                        <img class="profile-img" src="assets/icons/user.svg" alt="Profile Image" />
+                        <h1 class="profile-username">Username</h1>
+                    </div>
                     <p class="profile-bio">Bio</p>
-                </div>
-                <div class="profile-content">
                     <div class="profile-stats">
                         <div class="stat">
                             <p class="stat-number">0</p>
@@ -101,6 +104,9 @@
                             <p class="stat-label">Following</p>
                         </div>
                     </div>
+                </div>
+                <div class="profile-content">
+                    
                     <div class="cards-container">
                         <div class="card" href="drink.html">
                             <img class="card-img" src="assets/drink-6.jpg" alt="Drink Image" />

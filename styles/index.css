@@ -4,7 +4,9 @@
     display: flex;
     gap: 15px;
     flex-direction: column;
+    text-align: center;
 }
+
 
 .login-container form {
     display: flex;
@@ -18,7 +20,6 @@
     border-radius: 20px;
     border: 1px solid var(--text-color);
 }
-
 
 /* Feed Items */
 
@@ -49,8 +50,8 @@
 
 .btn.tag.selected img {
     display: block;
-    width: 15px;
-    height: 15px;
+    width: 20px;
+    height: 20px;
 }
 
 .btn.tag:hover, .btn.tag.selected  {
@@ -67,6 +68,7 @@
     z-index: 100;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     gap: 10px;
     padding: 30px 0 30px 250px;
@@ -80,17 +82,15 @@
 }
 
 .cards-container {
-    z-index: -999;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
     gap: 15px;
-    /* align-items: stretch; */
     justify-content: center;
+    justify-items: center;
 }
 
 .card {
     background: white;
-    /* padding: 15px; */
     border-radius: 10px;
     width: 100%;
     max-width: 250px;
@@ -99,7 +99,6 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    /* justify-content: space-between; */
 }
 
 .card-img {
@@ -107,7 +106,6 @@
     height: auto;
     max-height: 200px;
     object-fit: cover;
-    /* border-radius: 10px 10px 0 0; */
 }
 
 .card-content {
@@ -137,20 +135,6 @@
     font-size: 18px;
     margin: 10px 0;
 }
-/* 
-.card p {
-    font-size: 14px;
-} */
-
-/* .card a {
-    display: block;
-    text-decoration: none;
-    background: #6d4c41;
-    color: white;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 5px;
-} */
 
 .view-more {
     display: block;
@@ -175,12 +159,57 @@
 
 
 @media screen and (max-width: 992px), screen and (max-height: 600px) {
+    nav .logo-link h2 {
+        display: block;
+    }
+
+    nav {
+        gap: 0;
+        flex-direction: column;
+        padding-top: 30px;
+        min-height: 0;
+    }
+
+    .tags-container {
+        padding: 20px 0 20px 125px;
+    }
+
+    .content {
+        margin-left: 200px;
+    }
+
+    .content > * {
+        padding: 20px 0 20px 125px;
+    }
 
 }
 
 @media screen and (max-width: 600px), screen and (max-height: 600px) {
+    nav {
+        gap: 0;
+        flex-direction: column;
+        padding-top: 30px;
+    }
+
+    nav .misc-links {
+        padding: 0;
+    }
+
+    .login-container form {
+        gap: 10px;
+    }
+
+    .content {
+        margin-left: 0;
+    }
+
+    .content > * {
+        padding: 20px;
+    }
+
     /* Feed items */
     .tags-container {
         padding: 20px;
     }
+    
 }

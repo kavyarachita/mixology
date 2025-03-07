@@ -1,153 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mixology - Profile</title>
+    <meta name="author" content="Kavya Annapareddy"/>
+    <meta name="description" content="Mixology is a social media platform for drink enthusiasts to share their recipes with other passionate individuals."/>
+    <title>Mixology - User Profile</title>
     <link rel="stylesheet" href="styles/base.css" />
     <link rel="stylesheet" href="styles/profile.css" />
-  </head>
-  <body>
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/scripts.js"></script>
+</head>
+
+<body>
     <div class="container">
-      <div class="sidebar">
-        <nav>
-          <div class="logo-link">
-            <img src="assets/logo-md.svg" alt="Logo" />
-            <h2 class="logo">Mixology</h2>
-          </div>
-          <div class="user-nav">
-            <img class="logo" src="assets/user-48.png" alt="User Icon" />
-            <p>Username</p>
-          </div>
-          <div class="new-post">
-            <a class="tab" href="new-post.html">Add Drink</a>
-          </div>
-          <ul>
-            <li><a class="active" href="auth-index.html">Home</a></li>
-            <li><a href="profile.html">Profile</a></li>
-            <li><a href="collections.html">Collections</a></li>
-            <li><a href="settings.html">Settings</a></li>
-          </ul>
-          <a class="tab logout" href="index.html">Logout</a>
-          <a href="#">Help</a>
-        </nav>
-      </div>
-      <div class="horizontal-nav">
-        <nav>
-          <img class="logo" src="assets/logo-md.svg" alt="Logo" />
-          <div class="new-post">
-            <a class="tab" href="new-post.html">Add Drink</a>
-          </div>
-          <ul>
-            <li><a href="auth-index.html">Home</a></li>
-            <li><a href="profile.html">Profile</a></li>
-            <li><a href="collections.html">Collections</a></li>
-            <li><a href="settings.html">Settings</a></li>
-          </ul>
-          <a class="tab logout" href="index.html">Logout</a>
-        </nav>
-      </div>
-      <main class="profile content-container">
-        <div class="content-header" id="top">
-          <div>
-            <div class="profile-user-info">
-              <img class="user-icon" src="assets/user-48.png" alt="User Icon" />
-              <div class="account-info">
-                <h2>Username</h2>
-                <div>
-                  <p>12 followers</p>
-                  <p>4 posts</p>
-                  <p>Joined 2021</p>
-                  <button class="tab">Follow</button>
-                </div>
-              </div>
+        <div class="header">
+            <div class="header-content">
+                <form class="search-form" method="get" action="search-results.html">
+                    <input type="text" class="search-bar" placeholder="Search..." name="query"/>
+                    <input class="btn search-button" type="submit">
+                        <img src="assets/icons/search.svg" alt="Search Icon" class="icon" />
+                    </input>
+                </form>
+                <a class="profile" href="profile.html">
+                    <img class="icon profile-icon" src="assets/icons/user.svg" alt="User Icon" />
+                    <p>Username</p>
+                </a>
             </div>
-            <div class="search">
-              <input type="text" placeholder="Search" />
-              <button class="tab">Search</button>
-              <button class="filter-button">
-                <img src="assets/filter-50.png" alt="Filter Icon"/> 
-                <!-- source: https://icons8.com/icons -->
-              </button>
-            </div>
-          </div>
-          <div>
-            <div class="tabs">
-              <button class="tab active">Posts</button>
-              <button class="tab">Collections</button>
-            </div>
-            <button class="refresh-button">
-              <img src="assets/refresh-64.png" alt="Refresh Icon"/>
-              <!-- source: https://icons8.com/icons -->
-          </div>
         </div>
-        <div class="cards">
-        
-          <div class="card" href="drink.html">
-            <img class="card-img" src="assets/drink-3.jpg" alt="Drink Image" />
-            <div class="card-content">
-              <h2>Mimosa</h2>
-              <p>Great for a brunch with the girls</p>
-              <a class="user-info" href="other-profile.html">
-                <img
-                  class="user-icon"
-                  src="assets/user-48.png"
-                  alt="User Icon"
-                />
-                <p>Peni Parker</p>
-              </a>
-              <div class="view-more"><a href="drink.html">View More &rarr;</a></div>
+        <nav>
+            <div>
+                <a class="logo-link" href="auth-index.html">
+                    <img src="assets/logo-md.svg" alt="Logo" />
+                    <h2 class="logo">Mixology</h2>
+                </a>
+                <div class="nav-links">
+                    <ul>
+                        <li>
+                            <a href="auth-index.html">
+                                <img src="assets/icons/home.svg" alt="Home Icon" class="icon" />
+                                <p>Home</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="add-drink.html">
+                                <img src="assets/icons/new-post.svg" alt="New Post Icon" class="icon" />
+                                <p>New Post</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="profile.html">
+                                <img src="assets/icons/profile.svg" alt="Profile Icon" class="icon" />
+                                <p>Profile</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="collections.html">
+                                <img src="assets/icons/collections.svg" alt="Collections Icon" class="icon" />
+                                <p>Collections</p>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="settings.html">
+                                <img src="assets/icons/settings.svg" alt="Settings Icon" class="icon" />
+                                <p>Settings</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-          </div>
-          <div class="card" href="drink.html">
-            <img class="card-img" src="assets/drink-6.jpg" alt="Drink Image" />
-            <div class="card-content">
-              <h2>Matcha Latte</h2>
-              <p>Relaxing and creamy morning pick me up</p>
-              <a class="user-info" href="other-profile.html">
-                <img
-                  class="user-icon"
-                  src="assets/user-48.png"
-                  alt="User Icon"
-                />
-                <p>Wanda Maximoff</p>
-              </a>
-              <div class="view-more"><a href="drink.html">View More &rarr;</a></div>
+            <div class="nav-footer">
+                <div class="misc-links">
+                    <a href="about.html">About</a>
+                    <a href="#">
+                        <img src="assets/icons/help.svg" alt="Help Icon" class="icon" />
+                    </a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                <p class="copyright">&copy; 2025 Mixology.</p>
             </div>
-          </div>
-          <div class="card" href="drink.html">
-            <img class="card-img" src="assets/drink-5.jpg" alt="Drink Image" />
-            <div class="card-content">
-              <h2>Citrus Juice</h2>
-              <p>Full of Vitamin C</p>
-              <a class="user-info" href="other-profile.html">
-                <img
-                  class="user-icon"
-                  src="assets/user-48.png"
-                  alt="User Icon"
-                />
-                <p>Doreen Green</p>
-              </a>
-              <div class="view-more"><a href="drink.html">View More &rarr;</a></div>
+        </nav>
+        <div class="content">
+            <div class="alert"></div>
+            <div class="profile-container">
+                <div class="profile-header">
+                    <div class="profile-info">
+                        <img class="profile-image" src="assets/icons/user.svg" alt="User Icon" />
+                        <h1 class="profile-name">Wanda Maximoff</h1>
+                        <button class="btn follow-btn">Follow</button>
+                    </div>
+                    <p class="profile-bio">I like to make new drinks!</p>
+                    <div class="profile-stats">
+                        <div class="stat">
+                            <p class="stat-number" id="posts-stat">3</p>
+                            <p class="stat-label" id="post-stat-label">Posts</p>
+                        </div>
+                        <div class="stat">
+                            <p class="stat-number" id="followers-stat">10</p>
+                            <p class="stat-label" id="followers-stat-label">Followers</p>
+                        </div>
+                        <div class="stat">
+                            <p class="stat-number" id="following-stat">2</p>
+                            <p class="stat-label" id="following-stat-label">Following</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-content">
+                    <div class="cards-container">
+                        <div class="card" href="drink.html">
+                            <img class="card-img" src="assets/drink-6.jpg" alt="Drink Image" />
+                            <div class="card-content">
+                            <h2>Matcha Latte</h2>
+                            <div class="view-more"><a href="drink.html">View More &rarr;</a></div>
+                            </div>
+                        </div>
+                        <div class="card" href="drink.html">
+                            <img class="card-img" src="assets/drink-2.jpg" alt="Drink Image" />
+                            <div class="card-content">
+                            <h2>Hot Chocolate</h2>
+                            <div class="view-more"><a href="drink.html">View More &rarr;</a></div>
+                            </div>
+                        </div>
+                        <div class="card" href="drink.html">
+                            <img class="card-img" src="assets/drink-3.jpg" alt="Drink Image" />
+                            <div class="card-content">
+                            <h2>Lemonade</h2>
+                            <div class="view-more"><a href="drink.html">View More &rarr;</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="card" href="drink.html">
-            <img class="card-img" src="assets/drink-2.jpg" alt="Drink Image" />
-            <div class="card-content">
-              <h2>Hot Chocolate</h2>
-              <p>A warm comforting drink for the holidays.</p>
-              <a class="user-info" href="other-profile.html">
-                <img
-                  class="user-icon"
-                  src="assets/user-48.png"
-                  alt="User Icon"
-                />
-                <p>Tony Stark</p>
-              </a>
-              <div class="view-more"><a href="drink.html">View More &rarr;</a></div>
-            </div>
-          </div>
-      </main>
+
+            <footer>
+                <a href="#top">Back to Top</a>
+                
+            </footer>
+        </div>
     </div>
-  </body>
+</body>
+
 </html>

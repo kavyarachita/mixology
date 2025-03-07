@@ -1,0 +1,139 @@
+/* Nav Login */
+
+.login-container {
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+    text-align: center;
+}
+
+.login-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+/* Feed Items */
+
+.btn.tag {
+    font-size: small;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn.tag, .btn.tag.selected:hover {
+    background-color: var(--secondary-color);
+}
+
+.btn.tag p, .btn.tag.selected:hover p{
+    color: var(--btn-secondary);
+}
+
+.btn.tag p {
+    margin: 0;
+}
+
+.btn.tag img {
+    display: none;
+}
+
+.btn.tag.selected img {
+    display: block;
+    width: 20px;
+    height: 20px;
+}
+
+.btn.tag:hover, .btn.tag.selected  {
+    background-color: var(--primary-color);    
+}
+
+.btn.tag:hover p, .btn.tag.selected p  {
+    color: var(--background-color);
+}
+
+.tags-container {
+    position: sticky;
+    top: 100px;
+    z-index: 100;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 30px 0 30px 250px;
+    background-color: var(--background-color);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.tags-container h4 {
+    margin: 0;
+    padding: 10px 15px;
+}
+
+.home-feed-container {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 20px;
+}
+
+
+@media screen and (max-width: 992px), screen and (max-height: 600px) {
+    nav .logo-link h2 {
+        display: block;
+    }
+
+    nav {
+        gap: 0;
+        flex-direction: column;
+        padding-top: 30px;
+        min-height: 0;
+    }
+
+    .tags-container {
+        padding: 20px 0 20px 125px;
+    }
+
+    .content {
+        margin-left: 200px;
+    }
+
+    .content > * {
+        padding-left: 125px;
+    }
+
+}
+
+@media screen and (max-width: 600px), screen and (max-height: 600px) {
+    nav {
+        gap: 0;
+        flex-direction: column;
+        padding-top: 30px;
+    }
+
+    nav .misc-links {
+        padding: 0;
+    }
+
+    .content {
+        margin-left: 0;
+    }
+
+    .content > * {
+        padding: 20px;
+    }
+
+    /* Feed items */
+    .tags-container {
+        padding: 20px;
+    }
+    
+    .home-feed-container {
+        align-items: center;
+    }
+}

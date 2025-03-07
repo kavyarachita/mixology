@@ -359,6 +359,21 @@ form input[type="submit"] {
     border: 3px solid var(--btn-secondary);
 }
 
+form ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+form ul li {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
 /* SEARCH RESULTS */
 .results .card {
     display: none;

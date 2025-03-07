@@ -54,3 +54,9 @@
 .comment-output {
   display: none;
 }
+
+#last-update {
+  font-size: small;
+  font-style: italic;
+  color: var(--btn-secondary)
+}

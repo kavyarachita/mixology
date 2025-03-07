@@ -89,6 +89,15 @@
                     <div class="drink-text
                     ">
                         <h1>Matcha Latte</h1>
+                        <a class="user-info" href="other-profile.html">
+                            <img
+                            class="icon user-icon"
+                            src="assets/icons/user.svg"
+                            alt="User Icon"
+                            />
+                            <p>Wanda Maximoff</p>
+                        </a>
+                        <p id="last-update">posted 10 days ago</p>
                         <p>Category: Tea</p>
                         <p>Ingredients:</p>
                         <ul>
@@ -129,10 +138,10 @@
                             <p>Tastes like grass</p>
                         </div>
                     </div>
-                    <div class="comment-form">
-                        <textarea class="comment-input" placeholder="Add a comment..."></textarea>
-                        <button class="btn comment-btn">Post</button>
-                    </div>
+                    <form class="comment-form" method="get">
+                        <textarea class="comment-input" placeholder="Add a comment..." name="comment-input"></textarea>
+                        <input class="btn comment-btn" type="submit" value="Post Comment"></input>
+                    </form>
                 </div>
             </div>
             <footer>

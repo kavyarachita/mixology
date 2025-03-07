@@ -84,7 +84,7 @@
             <div class="alert"></div>
             <div class="add-drink">
                 <h1>New Drink</h1>
-                <form class="add-drink-form">
+                <form class="add-drink-form" method="post" action="profile.html">
                     <label for="name">Name:</label>
                     <input type="text" id="name" name="name" required><br><br>
     
@@ -92,13 +92,8 @@
                     <textarea id="description" name="description" required></textarea><br><br>
     
                     <label for="ingredients">Ingredients:</label>
-                    <ul id="ingredients">
-                        <li>
-                            <input type="text" name="ingredient" required>
-                            <button type="button" class="btn">Delete</button>
-                        </li>
-                    </ul>
-                    <button type="button" class="btn">Add Ingredient</button><br><br>
+                    <ul id="ingredients"></ul>
+                    <button type="button" class="btn" onclick="addIngridient()">Add Ingredient</button><br><br>
     
                     <label for="images">Upload Images:</label>
                     <input type="file" id="images" name="images" multiple><br><br>
@@ -111,7 +106,6 @@
             </div>
             <footer>
                 <a href="#top">Back to Top</a>
-                
             </footer>
         </div>
     </div>

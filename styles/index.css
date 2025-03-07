@@ -7,18 +7,12 @@
     text-align: center;
 }
 
-
-.login-container form {
+.login-btns {
     display: flex;
-    flex-direction: column;
     gap: 10px;
-}
-
-.login-container form input {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 20px;
-    border: 1px solid var(--text-color);
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 /* Feed Items */
@@ -81,80 +75,11 @@
     padding: 10px 15px;
 }
 
-.cards-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
-    gap: 15px;
-    justify-content: center;
-    justify-items: center;
-}
-
-.card {
-    background: white;
-    border-radius: 10px;
-    width: 100%;
-    max-width: 250px;
-    text-align: start;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+.home-feed-container {
     display: flex;
     flex-direction: column;
-}
-
-.card-img {
-    width: 100%;
-    height: auto;
-    max-height: 200px;
-    object-fit: cover;
-}
-
-.card-content {
-    padding: 20px 25px;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.user-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 1px solid rgba(var(--secondary-color), 0.5);
-}
-
-.user-info p {
-    font-weight: bold;
-    font-size: small;
-    color: var(--accent-color);
-}
-
-.card h2 {
-    font-size: 18px;
-    margin: 10px 0;
-}
-
-.view-more {
-    display: block;
-    text-align: right;
-    margin-top: 5px;
-    font-size: small;
-    font-style: italic;
-}
-
-.view-more a {
-    text-decoration: none;
-    color: var(--accent-color);
-}
-
-.view-more a:hover {
-    text-decoration: underline;
-}
-
-.view-more a:visited {
-    color: var(--accent-color);
+    align-items: start;
+    gap: 20px;
 }
 
 
@@ -179,7 +104,7 @@
     }
 
     .content > * {
-        padding: 20px 0 20px 125px;
+        padding-left: 125px;
     }
 
 }
@@ -195,10 +120,6 @@
         padding: 0;
     }
 
-    .login-container form {
-        gap: 10px;
-    }
-
     .content {
         margin-left: 0;
     }
@@ -212,4 +133,7 @@
         padding: 20px;
     }
     
+    .home-feed-container {
+        align-items: center;
+    }
 }

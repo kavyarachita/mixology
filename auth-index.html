@@ -7,15 +7,14 @@
     <meta name="author" content="Kavya Annapareddy"/>
     <meta name="description" content="Mixology is a social media platform for drink enthusiasts to share their recipes with other passionate individuals."/>
     <title>Mixology - Home</title>
-    <link rel="stylesheet" href="styles/index.css" />
     <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/index.css" />
 </head>
 
 <body>
     <div class="container">
         <div class="header">
             <div class="header-content">
-                <!-- search bar form -->
                 <form class="search-form">
                     <input type="text" class="search-bar" placeholder="Search..." />
                     <button class="btn search-button">
@@ -30,14 +29,14 @@
         </div>
         <nav>
             <div>
-                <a class="logo-link" href="index.html">
+                <a class="logo-link" href="auth-index.html">
                     <img src="assets/logo-md.svg" alt="Logo" />
                     <h2 class="logo">Mixology</h2>
                 </a>
                 <div class="nav-links">
                     <ul>
                         <li>
-                            <a class="active" href="index.html">
+                            <a class="active" href="auth-index.html">
                                 <img src="assets/icons/home.svg" alt="Home Icon" class="icon" />
                                 <p>Home</p>
                             </a>
@@ -85,28 +84,28 @@
                 <h4>Filters</h4>
                 <div class="btn tag">
                     <p>Tag 1</p>
-                    <img src="assets/icons/search.svg" alt="Deselect Filter Icon"/> 
-                    <!-- TODO: switch to x icon -->
+                    <img src="assets/icons/close.svg" alt="Deselect Filter Icon"/> 
                 </div>
                 <div class="btn tag">
                     <p>Tag 2</p>
-                    <img src="assets/icons/search.svg" alt="Deselect Filter Icon"/>
+                    <img src="assets/icons/close.svg" alt="Deselect Filter Icon"/>
                 </div>
                 <div class="btn tag selected">
                     <p>Tag 3</p>
-                    <img src="assets/icons/search.svg" alt="Deselect Filter Icon"/> 
+                    <img src="assets/icons/close.svg" alt="Deselect Filter Icon"/> 
                 </div>
                 <div class="btn tag selected">
                     <p>Tag 4</p>
-                    <img src="assets/icons/search.svg" alt="Deselect Filter Icon"/>
+                    <img src="assets/icons/close.svg" alt="Deselect Filter Icon"/>
                 </div>
             </div>
+            <div class="home-feed-container">
+                <h1>Home</h1>
             <div class="cards-container">
                 <div class="card" href="drink.html">
                     <img class="card-img" src="assets/drink-6.jpg" alt="Drink Image" />
                     <div class="card-content">
                       <h2>Matcha Latte</h2>
-                      <!-- <p>Relaxing and creamy morning pick me up</p> -->
                       <a class="user-info" href="other-profile.html">
                         <img
                           class="user-icon"
@@ -122,7 +121,6 @@
                     <img class="card-img" src="assets/drink-6.jpg" alt="Drink Image" />
                     <div class="card-content">
                       <h2>Matcha Latte</h2>
-                      <!-- <p>Relaxing and creamy morning pick me up</p> -->
                       <a class="user-info" href="other-profile.html">
                         <img
                           class="user-icon"
@@ -138,7 +136,6 @@
                     <img class="card-img" src="assets/drink-6.jpg" alt="Drink Image" />
                     <div class="card-content">
                       <h2>Matcha Latte</h2>
-                      <!-- <p>Relaxing and creamy morning pick me up</p> -->
                       <a class="user-info" href="other-profile.html">
                         <img
                           class="user-icon"
@@ -150,6 +147,7 @@
                       <div class="view-more"><a href="drink.html">View More &rarr;</a></div>
                     </div>
                 </div>
+            </div>
             </div>
             <footer>
                 <a href="#top">Back to Top</a>

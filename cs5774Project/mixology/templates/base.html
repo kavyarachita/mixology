@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,17 +19,24 @@
     <div class="container">
         <div class="header">
             <div class="header-content">
-                <form class="search-form" method="get" action="/search/">
+                <a class="logo-link" href="/">
+                    <img src="{% static 'assets/logo-md.svg' %}" alt="Logo" />
+                    <h2 class="logo">Mixology</h2>
+                </a>
+                <form class="search-form" method="GET" action="/search/">
                     <input type="text" class="search-bar" placeholder="Search..." name="query"/>
                     {% comment %} <input class="btn search-button" type="submit"/> {% endcomment %}
                     <button class="btn search-button" type="submit">
                         <img src="{% static 'assets/icons/search.svg' %}" alt="Search Icon" class="icon" />
                     </button>
                 </form>
-                <a class="profile" href="/profile">
+                {% if request.session.user %}
+                <a class="profile" href="/profile/{{request.session.slug}}">
                     <img class="icon profile-icon" src="{% static 'assets/icons/user.svg' %}" alt="User Icon" />
-                    <p>Username</p>
+                    <p>{{ request.session.user }}</p>
                 </a>
+                {% endif %}
+                
             </div>
         </div>
         <nav>
@@ -37,6 +45,7 @@
                     <img src="{% static 'assets/logo-md.svg' %}" alt="Logo" />
                     <h2 class="logo">Mixology</h2>
                 </a>
+                {% if request.session.user %}
                 <div class="nav-links">
                     <ul>
                         {% for url in nav_urls %}
@@ -49,6 +58,18 @@
                         {% endfor %}
                     </ul>
                 </div>
+                {% else %}
+                <div class="login-container">
+                    <form class="nav-login-form" action="/login/" method="POST">
+                        {% csrf_token %}
+                      <input type="text" name="username" placeholder="Username" />
+                      <input type="password" name="pwd" placeholder="Password" />
+                      <input class="btn" type="submit" value="Log In" />
+                    </form>
+                    <p>Don't have an account?</p>
+                    <a class="btn" href="/sign-up">Sign Up</a>
+                </div>
+                {% endif %}
             </div>
             <div class="nav-footer">
                 <div class="misc-links">
@@ -59,10 +80,16 @@
                     <a href="/contact">Contact</a>
                 </div>
                 <p class="copyright">&copy; 2025 Mixology.</p>
+                {% if request.session.user %}
+                <a class="logout btn" href="/logout">
+                    <img src="{% static 'assets/icons/logout.svg' %}" alt="Logout" class="icon" />
+                    <p>Logout</p>
+                </a>
+                {% endif %}
             </div>
         </nav>
         <div class="content">
-            <div class="alert"></div>
+            <div class="alert">{% block alert %}{% endblock %}</div>
             {% block content %}{% endblock %}
             <footer>
                 <a href="#top">Back to Top</a>

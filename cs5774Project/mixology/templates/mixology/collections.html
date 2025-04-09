@@ -4,116 +4,45 @@
 {% block title %} Mixology - Collections {% endblock %}
 
 {% block stylesheet %}<link rel="stylesheet" href="{% static 'css/collections.css' %}" />{% endblock %}
-
+{% block alert %}{% endblock %}
 {% block content %}
 <div class="collection-container">
     <h1>My Collections</h1>
     <div class="table-of-contents">
         <h2>Table of Contents</h2>
         <ul class="collection-targets-list">
-            <li><a href="#summer-cocktails">Summer Cocktails</a></li>
-            <li><a href="#winter-cocktails">Winter Cocktails</a></li>
+            {% for collection in collections %}
+            <li><a href="#{{ collection.slug }}">{{ collection.name }}</a></li>
+            {% endfor %}
         </ul>
     </div>
-    <div class="collection" id="summer-cocktails">
-        <h2>Summer Cocktails</h2>
+    {% for collection in collections %}
+    <div class="collection" id="{{ collection.slug }}">
+        <h2>{{ collection.name }}</h2>
         <div class="collection-content">
-            <div class="card" href="/drink">
-                <img class="card-img" src="assets/drink-6.jpg" alt="Drink Image" />
-                <div class="card-content">
-                  <h2>Matcha Latte</h2>
-                  <a class="user-info" href="/other-profile">
-                    <img
-                      class="icon user-icon"
-                      src="assets/icons/user.svg"
-                      alt="User Icon"
-                    />
-                    <p>Wanda Maximoff</p>
-                  </a>
-                  <div class="view-more"><a href="/drink">View More &rarr;</a></div>
-                </div>
+          {% for drink in collection.drinks %}
+          <div class="card" href="/drink/{{ drink.slug }}">
+            <img class="card-img" src="{% static drink.image %}" alt="Drink Image" />
+            <div class="card-content">
+              <h2>{{ drink.name }}</h2>
+              <a class="user-info" href="/profile/{{ drink.poster.slug }}">
+                <img
+                  class="icon user-icon"
+                  src="{% static 'assets/icons/user.svg' %}"
+                  alt="User Icon"
+                />
+                <p>{{ drink.poster.username }}</p>
+              </a>
+              <div class="view-more">
+                <form action="/drink/{{ drink.slug }}" method="get">
+                  <button type="submit">View More &rarr;</button>
+              </form>
             </div>
-            <div class="card" href="/drink">
-                <img class="card-img" src="assets/drink-6.jpg" alt="Drink Image" />
-                <div class="card-content">
-                  <h2>Matcha Latte</h2>
-                  <a class="user-info" href="/other-profile">
-                    <img
-                      class="icon user-icon"
-                      src="assets/icons/user.svg"
-                      alt="User Icon"
-                    />
-                    <p>Wanda Maximoff</p>
-                  </a>
-                  <div class="view-more"><a href="/drink">View More &rarr;</a></div>
-                </div>
-            </div>
-            <div class="card" href="/drink">
-                <img class="card-img" src="assets/drink-6.jpg" alt="Drink Image" />
-                <div class="card-content">
-                  <h2>Matcha Latte</h2>
-                  <a class="user-info" href="/other-profile">
-                    <img
-                      class="icon user-icon"
-                      src="assets/icons/user.svg"
-                      alt="User Icon"
-                    />
-                    <p>Wanda Maximoff</p>
-                  </a>
-                  <div class="view-more"><a href="/drink">View More &rarr;</a></div>
-                </div>
             </div>
         </div>
-    </div>
-    <div class="collection" id="winter-cocktails">
-        <h2>Winter Cocktails</h2>
-        <div class="collection-content">
-            <div class="card" href="/drink">
-                <img class="card-img" src="assets/drink-6.jpg" alt="Drink Image" />
-                <div class="card-content">
-                  <h2>Matcha Latte</h2>
-                  <a class="user-info" href="/other-profile">
-                    <img
-                      class="icon user-icon"
-                      src="assets/icons/user.svg"
-                      alt="User Icon"
-                    />
-                    <p>Wanda Maximoff</p>
-                  </a>
-                  <div class="view-more"><a href="/drink">View More &rarr;</a></div>
-                </div>
-            </div>
-            <div class="card" href="/drink">
-                <img class="card-img" src="assets/drink-6.jpg" alt="Drink Image" />
-                <div class="card-content">
-                  <h2>Matcha Latte</h2>
-                  <a class="user-info" href="/other-profile">
-                    <img
-                      class="icon user-icon"
-                      src="assets/icons/user.svg"
-                      alt="User Icon"
-                    />
-                    <p>Wanda Maximoff</p>
-                  </a>
-                  <div class="view-more"><a href="/drink">View More &rarr;</a></div>
-                </div>
-            </div>
-            <div class="card" href="/drink">
-                <img class="card-img" src="assets/drink-6.jpg" alt="Drink Image" />
-                <div class="card-content">
-                  <h2>Matcha Latte</h2>
-                  <a class="user-info" href="/other-profile">
-                    <img
-                      class="icon user-icon"
-                      src="assets/icons/user.svg"
-                      alt="User Icon"
-                    />
-                    <p>Wanda Maximoff</p>
-                  </a>
-                  <div class="view-more"><a href="/drink">View More &rarr;</a></div>
-                </div>
-            </div>
+          {% endfor %}
         </div>
     </div>
+    {% endfor %}
 </div>
 {% endblock %}

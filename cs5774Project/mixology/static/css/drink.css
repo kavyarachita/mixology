@@ -12,6 +12,14 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.detail-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
 .drink-info {
   display: flex;
   flex-direction: row;
@@ -25,6 +33,12 @@
     height: auto;
     object-fit: cover;
     border-radius: 10px;
+}
+
+.ingredients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .drink-comments {
@@ -59,4 +73,20 @@
   font-size: small;
   font-style: italic;
   color: var(--btn-secondary)
+}
+
+@media screen and (max-width: 992px), screen and (max-height: 600px) {
+  .drink-details {
+    padding: 10px;
+  }
+
+  .drink-info {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .drink-image {
+    max-width: 100%;
+  }
+  
 }

@@ -4,28 +4,35 @@
 {% block title %} Mixology - Drink {% endblock %}
 
 {% block stylesheet %}<link rel="stylesheet" href="{% static 'css/drink.css' %}" />{% endblock %}
-
+{% block alert %}{% endblock %}
 {% block content %}
 <div class="drink-detail">
   <div class="drink-info">
-      <img src="{% static drink.get_image_url %}" alt="Drink" class="drink-image" />
+      <img src="{% static drink.image %}" alt="Drink" class="drink-image" />
       <div class="drink-text
       ">
-          <h1>{{ drink.name }}</h1>
+          <div class="detail-header">
+            <h1>{{ drink.name }}</h1>
+            {% if request.session.user and drink.poster.username == request.session.user or request.session.user and request.session.role == 'admin' %}
+            <form action="/edit-drink/{{ drink.slug }}" method="get">
+                <button class="btn" type="submit">Edit</button>
+            </form>
+            {% endif %}
+          </div>
           <a class="user-info" href="/profile/{{ drink.poster.slug }}">
               <img
               class="icon user-icon"
               src="{% static 'assets/icons/user.svg' %}"
               alt="User Icon"
               />
-              <p>{{ drink.poster }}</p>
+              <p>{{ drink.poster.username }}</p>
           </a>
           <p id="last-update">{{ drink.last_updated }}</p>
-          <p>Ingredients: {{ drink.ingredients }} </p>
-          <ul>
-              <li>Matcha Powder</li>
-              <li>Water</li>
-              <li>Milk</li>
+          <p>Ingredients: </p>
+          <ul class="ingredients-list">
+            {% for ingredient in drink.ingredients %}
+                <li><a class="btn" href="/search/?query={{ingredient.name}}">{{ ingredient.name }}</a></li>
+            {% endfor %}
           </ul>
           <p>Instructions:</p>
           <p>{{ drink.instructions }}</p>
@@ -42,7 +49,7 @@
               <p id="user-comment">Comment</p>
           </div>
       </div>
-      <form class="comment-form" method="get">
+      <form class="comment-form" method="get" action="">
           <textarea class="comment-input" placeholder="Add a comment..." name="comment-input"></textarea>
           <input class="btn comment-btn" type="submit" value="Post Comment" />
       </form>

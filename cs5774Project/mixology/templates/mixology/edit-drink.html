@@ -1,0 +1,43 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block title %} Mixology - Drink Edit {% endblock %}
+
+{% block stylesheet %}<link rel="stylesheet" href="{% static 'css/drink.css' %}" />{% endblock %}
+{% block alert %}{% endblock %}
+{% block content %}
+<div class="edit-drink">
+    <h1>Edit {{ drink.name }}</h1>
+    <form class="edit-drink-form" method="POST" action="/save-drink/">
+        {% csrf_token %}
+        <input type="hidden" name="slug" value="{{ drink.slug }}">
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ drink.name }}" required><br><br>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required>{{ drink.description }}</textarea><br><br>
+
+        <label for="ingredients">Ingredients:</label>
+        <ul id="ingredients">
+        {% for i in drink.ingredients %}
+            <li>
+                <input type="text" name="ingredient" value="{{ i.name }}" required>
+                <button type="button" class="btn">Remove</button>
+            </li>
+        {% endfor %}
+        </ul>
+        <button type="button" class="btn">Add Ingredient</button><br><br>
+
+        <label for="images">Upload Images:</label>
+        <input type="file" id="images" name="images" multiple><br><br>
+
+        <button type="button" class="btn">Cancel</button>
+        {% if request.session.role == 'admin' %}
+        <button type="submit" class="btn" name="submit" value="delete">Delete</button>
+        {% endif %}
+        <button type="submit" class="btn" name="submit" value="update">Post</button>
+    </form>
+
+</div>
+{% endblock %}

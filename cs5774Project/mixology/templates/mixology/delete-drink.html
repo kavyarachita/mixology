@@ -1,0 +1,46 @@
+{% extends '../base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %} Mixology - Drink Edit {% endblock %}
+
+{% block stylesheet %}<link rel="stylesheet" href="{% static 'css/drink.css' %}" />{% endblock %}
+{% block content %}
+<div class="edit-drink">
+    <h1>Delete {{ drink.name }}</h1>
+    <form class="delete-drink-form" method="POST" action="/delete-drink/">
+        {% csrf_token %}
+        <input type="hidden" name="did" value="{{ drink.id }}">
+
+        <div class="card" href="/drink/{{ drink.id }}">
+            <img class="card-img" src="{% static drink.image %}" alt="Drink Image" />
+            <div class="card-content">
+            <h2>{{ drink.name }}</h2>
+            <a class="user-info" href="/profile/{{ drink.poster.username }}">
+                <img
+                class="icon user-icon"
+                src="{% static drink.poster.profile.get_pfp_url %}"
+                alt="User Icon"
+                />
+                <p>{{ drink.poster.username }}</p>
+            </a>
+            <div class="view-more">
+                <form action="/drink/{{ drink.id }}" method="get">
+                    <button type="submit">View More &rarr;</button>
+                </form>
+                <div>
+                    <p>{{ drink.last_updated|naturalday }}</p>
+                </div>
+            </div>
+            </div>
+        </div>
+        {% comment %} Check for user confirmation {% endcomment %}
+        <label for="confirmation">Are you sure you want to delete this post?</label>
+        <div class="submit-btns">
+            <button type="submit" class="btn btn-warn" name="submit" value="delete">Delete</button>
+            <button type="submit" class="btn" name="submit" value="cancel">Cancel</button>
+        </div>
+    </form>
+
+</div>
+{% endblock %}

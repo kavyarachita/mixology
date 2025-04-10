@@ -1,0 +1,109 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Kavya Annapareddy"/>
+    <meta name="description" content="Mixology is a social media platform for drink enthusiasts to share their recipes with other passionate individuals."/>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    {% block stylesheet %}{% endblock %}
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <a class="logo-link" href="/">
+                    <img src="{% static 'assets/logo-md.svg' %}" alt="Logo" />
+                    <h2 class="logo">Mixology</h2>
+                </a>
+                <form class="search-form" method="GET" action="/search/">
+                    <input type="text" class="search-bar" placeholder="Search..." name="query"/>
+                    {% comment %} <input class="btn search-button" type="submit"/> {% endcomment %}
+                    <button class="btn search-button" type="submit">
+                        <img src="{% static 'assets/icons/search.svg' %}" alt="Search Icon" class="icon" />
+                    </button>
+                </form>
+                {% if user.is_authenticated %}
+                <a class="profile" href="/profile/{{user}}">
+                    <img class="icon profile-icon" src="{% static user.profile.get_pfp_url %}" alt="User Icon" />
+                    <p>{{ user.username }}</p>
+                </a>
+                {% endif %}
+                
+            </div>
+        </div>
+        <nav>
+            <div>
+                <a class="logo-link" href="/">
+                    <img src="{% static 'assets/logo-md.svg' %}" alt="Logo" />
+                    <h2 class="logo">Mixology</h2>
+                </a>
+                {% if user.is_authenticated %}
+                <div class="nav-links">
+                    <ul>
+                        {% for url in nav_urls %}
+                            <li>
+                                <a href="{{ url.href }}" {% if url.active %} class="active"{% endif %}>
+                                    <img src="{% static 'assets/icons/' %}{{ url.icon }}" alt="{{ url.alt }}" class="icon" />
+                                    <p>{{ url.name }}</p>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% else %}
+                <div class="login-container">
+                    <form class="nav-login-form" action="/login/" method="POST">
+                        {% csrf_token %}
+                      <input type="text" name="username" placeholder="Username" />
+                      <input type="password" name="password" placeholder="Password" />
+                      <input class="btn" type="submit" value="Log In" />
+                    </form>
+                    <p>Don't have an account?</p>
+                    <a class="btn" href="/signup/">Sign Up</a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="nav-footer">
+                <div class="misc-links">
+                    <a href="/about">About</a>
+                    <a href="#">
+                        <img src="{% static 'assets/icons/help.svg' %}" alt="Help Icon" class="icon" />
+                    </a>
+                    <a href="/contact">Contact</a>
+                </div>
+                <p class="copyright">&copy; 2025 Mixology.</p>
+                {% if user.is_authenticated %}
+                <a class="logout btn" href="/logout">
+                    <img src="{% static 'assets/icons/logout.svg' %}" alt="Logout" class="icon" />
+                    <p>Logout</p>
+                </a>
+                {% endif %}
+            </div>
+        </nav>
+        <div class="content">
+            <div class="alert">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            {% block content %}{% endblock %}
+            <footer>
+                <a href="#top">Back to Top</a>
+            </footer>
+        </div>
+    </div>
+</body>
+
+</html>

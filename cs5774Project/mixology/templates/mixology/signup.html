@@ -1,0 +1,19 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block title %} Mixology - Sign Up {% endblock %}
+{% block content %}
+<div class="settings-container">
+    <h1>Sign Up</h1>
+    <form class="" action="/process-signup/" method="post">
+        {% csrf_token %}
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button class="btn" type="submit">Sign Up</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block title %} Mixology - Drink {% endblock %}
+
+{% block stylesheet %}<link rel="stylesheet" href="{% static 'css/drink.css' %}" />{% endblock %}
+{% block content %}
+<div class="drink-detail">
+  <div class="drink-info">
+      <img src="{% static drink.get_image_url %}" alt="Drink" class="drink-image" />
+      <div class="drink-text
+      ">
+          <div class="detail-header">
+            <h1>{{ drink.name }}</h1>
+            {% if user.is_authenticated and drink.poster.username == user or user.is_authenticated and user.is_superuser %}
+            <form action="/edit-drink/{{ drink.id }}" method="get">
+                <button class="btn" type="submit">Edit</button>
+            </form>
+            {% endif %}
+          </div>
+          <a class="user-info" href="/profile/{{ drink.poster.username }}">
+              <img
+              class="icon user-icon"
+              src="{% static drink.poster.profile.get_pfp_url %}"
+              alt="User Icon"
+              />
+              <p>{{ drink.poster.username }}</p>
+          </a>
+          <p id="last-update">{{ drink.last_updated }}</p>
+          <p>Ingredients: </p>
+          <ul class="ingredients-list">
+            {% for ingredient in drink.get_ingredients %}
+                <li><a class="btn" href="/search/?query={{ingredient.name}}">{{ ingredient.name }}</a></li>
+            {% endfor %}
+          </ul>
+          <p>Instructions:</p>
+          <p>{{ drink.instructions }}</p>
+      </div>
+  </div>
+  <div class="drink-comments">
+      <h2>Comments</h2>
+      <div class="comment comment-output">
+          <div class="comment-text">
+              <a href="/profile/{{ drink.poster.username }}">
+                  <img src="{% static user.profile.get_pfp_url %}" alt="User" class="icon" />
+                  <p>You</p>
+              </a>
+              <p id="user-comment">Comment</p>
+          </div>
+      </div>
+      <form class="comment-form" method="get" action="">
+          <textarea class="comment-input" placeholder="Add a comment..." name="comment-input"></textarea>
+          <input class="btn comment-btn" type="submit" value="Post Comment" />
+      </form>
+  </div>
+</div>
+{% endblock %}

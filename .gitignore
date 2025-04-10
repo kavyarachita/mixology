@@ -1,1 +1,6 @@
-old-pages/
+.venv
+*.zip
+images/
+icons/
+__pycache__/*
+db.sqlite3

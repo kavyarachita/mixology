@@ -3,9 +3,15 @@
     --secondary-color: #d4ebb9;
     --background-color: #FFFFFF;
     --dark-mode-background-color: #273E47;
-    --text-color: #8CAE68; /*#5A7658;*/
-    --accent-color: rgb(74, 52, 29);
+    --text-color: #8CAE68;
+    --accent-color: #4c382a;
     --btn-secondary: #517429;
+    --success-color: #8CAE68;
+    --success-text-color: #517429;
+    --error-color: #f69e9e;
+    --error-text-color: #512f2e;
+    --warning-color: #f7c67d;
+    --warning-text-color: #4c382a;
 }
     
 body {
@@ -436,15 +442,33 @@ form ul li {
 
 /* ALERT */
 
-.alert {
+.alert ul li {
     padding: 10px;
-    margin: 20px 20px 20px 250px;
-    display: none;
     border-radius: 10px;
     font-weight: bold;
     text-align: center;
     background-color: var(--secondary-color);
     color: var(--btn-secondary);
+}
+
+.alert ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.alert ul li.success {
+    background-color: var(--success-color);
+    color: var(--success-text-color);
+}
+
+.alert ul li.error {
+    background-color: var(--error-color);
+    color: var(--error-text-color);
+}
+
+.alert ul li.warning {
+    background-color: var(--warning-color);
+    color: var(--warning-text-color);
 }
 
 /* SCREEN < 992px width or 600px height */
@@ -493,7 +517,7 @@ form ul li {
 
     /* update content containers */
     .content {
-        margin-left: 100px;
+        margin-left: 150px;
         width: 100%;
         height: 100%;
     }

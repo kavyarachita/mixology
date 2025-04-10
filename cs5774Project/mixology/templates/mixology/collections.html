@@ -4,7 +4,6 @@
 {% block title %} Mixology - Collections {% endblock %}
 
 {% block stylesheet %}<link rel="stylesheet" href="{% static 'css/collections.css' %}" />{% endblock %}
-{% block alert %}{% endblock %}
 {% block content %}
 <div class="collection-container">
     <h1>My Collections</h1>
@@ -12,29 +11,29 @@
         <h2>Table of Contents</h2>
         <ul class="collection-targets-list">
             {% for collection in collections %}
-            <li><a href="#{{ collection.slug }}">{{ collection.name }}</a></li>
+            <li><a href="#{{ collection.id }}">{{ collection.name }}</a></li>
             {% endfor %}
         </ul>
     </div>
     {% for collection in collections %}
-    <div class="collection" id="{{ collection.slug }}">
+    <div class="collection" id="{{ collection.id }}">
         <h2>{{ collection.name }}</h2>
         <div class="collection-content">
           {% for drink in collection.drinks %}
-          <div class="card" href="/drink/{{ drink.slug }}">
+          <div class="card" href="/drink/{{ drink.id }}">
             <img class="card-img" src="{% static drink.image %}" alt="Drink Image" />
             <div class="card-content">
               <h2>{{ drink.name }}</h2>
-              <a class="user-info" href="/profile/{{ drink.poster.slug }}">
+              <a class="user-info" href="/profile/{{ drink.poster.username }}">
                 <img
                   class="icon user-icon"
-                  src="{% static 'assets/icons/user.svg' %}"
+                  src="{% static drink.poster.profile.get_pfp_url %}"
                   alt="User Icon"
                 />
                 <p>{{ drink.poster.username }}</p>
               </a>
               <div class="view-more">
-                <form action="/drink/{{ drink.slug }}" method="get">
+                <form action="/drink/{{ drink.id }}" method="get">
                   <button type="submit">View More &rarr;</button>
               </form>
             </div>

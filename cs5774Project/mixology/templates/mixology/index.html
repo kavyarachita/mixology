@@ -3,32 +3,31 @@
 {% load humanize %}
 
 {% block title %} Mixology - Home {% endblock %}
-{% block alert %}{% endblock %}
 {% block content %}
     <div class="home-feed-container">
         <h1>Home</h1>
         <div class="cards-container">
             {% for drink in feed_drinks %}
-                <div class="card" href="/drink/{{ drink.slug }}">
-                    <img class="card-img" src="{% static drink.image %}" alt="Drink Image" />
+                <div class="card" href="/drink/{{ drink.id }}">
+                    <img class="card-img" src="{% static drink.get_image_url %}" alt="Drink Image" />
                     <div class="card-content">
                     <h2>{{ drink.name }}</h2>
-                    <a class="user-info" href="/profile/{{ drink.poster.slug }}">
+                    <a class="user-info" href="/profile/{{ drink.poster.username }}">
                         <img
                         class="icon user-icon"
-                        src="{% static 'assets/icons/user.svg' %}"
+                        src="{% static drink.poster.profile.get_pfp_url %}"
                         alt="User Icon"
                         />
                         <p>{{ drink.poster.username }}</p>
                     </a>
                     <div class="view-more">
-                        <form action="/drink/{{ drink.slug }}" method="get">
+                        <form action="/drink/{{ drink.id }}" method="get">
                             <button type="submit">View More &rarr;</button>
                         </form>
                         <div>
                             <p>{{ drink.last_updated|naturalday }}</p>
-                            {% if request.session.user and drink.poster.username == request.session.user or request.session.user and request.session.role == 'admin' %}
-                            <form action="/edit-drink/{{ drink.slug }}" method="get">
+                            {% if user.is_authenticated and drink.poster.username == user or user.is_authenticated and user.is_superuser %}
+                            <form action="/edit-drink/{{ drink.id }}" method="get">
                                 <button type="submit">Edit</button>
                             </form>
                             {% endif %}

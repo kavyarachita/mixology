@@ -3,26 +3,25 @@
 {% load humanize %}
 
 {% block title %} Mixology - Search {% endblock %}
-{% block alert %}{% endblock %}
 {% block content %}
 <div class="results-container">
     <h1>Search Results for {{ query }}</h1>
     <div class="results cards-container">
         {% for drink in search_results %}
-            <div class="card" href="/drink/{{ drink.slug }}">
+            <div class="card" href="/drink/{{ drink.id }}">
                 <img class="card-img" src="{% static drink.image %}" alt="Drink Image" />
                 <div class="card-content">
                 <h2>{{ drink.name }}</h2>
-                <a class="user-info" href="/profile/{{ drink.poster.slug }}">
+                <a class="user-info" href="/profile/{{ drink.poster.username }}">
                     <img
                     class="icon user-icon"
-                    src="{% static 'assets/icons/user.svg' %}"
+                    src="{% static drink.poster.profile.get_pfp_url %}"
                     alt="User Icon"
                     />
                     <p>{{ drink.poster.username }}</p>
                 </a>
                 <div class="view-more">
-                    <form action="/drink/{{ drink.slug }}" method="get">
+                    <form action="/drink/{{ drink.id }}" method="get">
                         <button type="submit">View More &rarr;</button>
                     </form>
                 </div>

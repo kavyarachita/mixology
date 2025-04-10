@@ -1,9 +1,12 @@
 import copy
+from django.contrib import messages, auth
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
+from django.urls import reverse
 from django.views import generic
 from .models import *
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -15,58 +18,98 @@ nav_urls = [
     {'href': '/settings', 'name': 'Settings', 'active': False, 'icon': 'settings.svg'},
 ]
 
+# sign up
+def signup(request):
+    context = {
+        'nav_urls': nav_urls,
+    }
+    return render(request, 'mixology/signup.html', context)
+
+def process_signup(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        email = request.POST.get('email')
+        
+        # Create a new user
+        user = User.objects.create_user(username=username, password=password, email=email)
+        
+        # Create a user profile
+        profile = UserProfile(user=user)
+        profile.save()
+        
+        messages.add_message(request, messages.SUCCESS, 'Account created successfully for %s!' % username)
+        
+        # Log user in and redirect to the home page
+        return redirect('mixology:home')
+    
+    return signup(request)
+
 # login/logout
-def login(request):
-    username = request.POST.get('username')
-    password = request.POST.get('pwd')
-    if username in users and password == users[username].password:
-        request.session['user'] = users[username].username
-        request.session['slug'] = users[username].slug
-        request.session['role'] = 'admin' if users[username].username == 'admin' else 'user'
-        nav_urls[2]['href'] = '/profile/' + users[username].slug
-        return redirect('/profile/' + users[username].slug)   
-    return redirect('/')
+def process_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = auth.authenticate(username=username, password=password)
+
+        if user is not None:
+            auth.login(request, user)
+            request.session['user'] = username
+            return redirect('/')
+        else:
+            messages.error(request, 'Invalid username or password.')
+            return redirect('mixology:home')
+    else:
+        return redirect('/')
+
 # clear out session vars upon logout
 def logout(request):
     request.session.flush()
     return redirect('/')
 
 # home
-def index(request):
-    feed_drinks = sorted(drinks, key=lambda drink: drink.last_updated, reverse=True)
-    # for every view, update the profile link to the user slug
-    active_nav_urls = copy.deepcopy(nav_urls)
-    if request.session.get('user'):
-        active_nav_urls[2]['href'] = '/profile/' + request.session.get('slug')
-    active_nav_urls[0]['active'] = True
+class IndexView(generic.ListView):
+    template_name = 'mixology/index.html'
+    context_object_name = 'feed_drinks'
     
-    context = {
-        'feed_drinks': feed_drinks,
-        'nav_urls': active_nav_urls,
-    }
-    return render(request, 'mixology/index.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        active_nav_urls = copy.deepcopy(nav_urls)
+        active_nav_urls[0]['active'] = True
+        if self.request.user.is_authenticated:
+            active_nav_urls[2]['href'] = '/profile/' + self.request.user.username
+        context['nav_urls'] = active_nav_urls
+        return context
+
+    def get_queryset(self):
+        drinks = Drink.objects.filter(status=Drink.Status.PUBLISHED).order_by('-last_updated')
+        return sorted(drinks, key=lambda drink: drink.last_updated, reverse=True)
 
 # drink logic
 
-def drink(request, slug):
+class DrinkView(generic.DetailView):
+    model = Drink
+    template_name = 'mixology/drink.html'
+    context_object_name = 'drink'
     
-    drink = [drink for drink in drinks if drink.slug == slug][0]
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        active_nav_urls = copy.deepcopy(nav_urls)
+        if self.request.user.is_authenticated:
+            active_nav_urls[2]['href'] = '/profile/' + self.request.user.username
+        context['nav_urls'] = active_nav_urls
+        return context
     
-    active_nav_urls = copy.deepcopy(nav_urls)
-    if request.session.get('user'):
-        active_nav_urls[2]['href'] = '/profile/' + request.session.get('slug')
-
-    context = {
-        'nav_urls': active_nav_urls,
-        'drink': drink,
-    }
-    return render(request, 'mixology/drink.html', context)
+    def get_object(self):
+        drink_id = self.kwargs.get('did')
+        return Drink.objects.get(pk=drink_id)
 
 def add_drink(request):
     active_nav_urls = copy.deepcopy(nav_urls)
-    if request.session.get('user'):
-        active_nav_urls[2]['href'] = '/profile/' + request.session.get('slug')
-    else :
+    if request.user.is_authenticated:
+        active_nav_urls[2]['href'] = '/profile/' + request.session.get('user')
+    else:
         return redirect('/')
     active_nav_urls[1]['active'] = True
     
@@ -77,9 +120,7 @@ def add_drink(request):
 
 def edit_drink(request, slug):
     active_nav_urls = copy.deepcopy(nav_urls)
-    if request.session.get('user'):
-        active_nav_urls[2]['href'] = '/profile/' + request.session.get('slug')
-    else:
+    if not request.user.is_authenticated:
         return redirect('/')
     
     drink = [drink for drink in drinks if drink.slug == slug][0]
@@ -91,13 +132,12 @@ def edit_drink(request, slug):
     return render(request, 'mixology/edit-drink.html', context)
 
 def delete_drink(request):
-    active_nav_urls = copy.deepcopy(nav_urls)
-    if request.session.get('user'):
-        active_nav_urls[2]['href'] = '/profile/' + request.session.get('slug')
-
+    if not request.user.is_authenticated:
+        return redirect('/')
+    
     if request.session.get('role') == 'admin' and request.POST.get('submit') == 'delete':
         # TODO: delete drink
-        return redirect('/profile/' + request.session.get('slug'))
+        return redirect('/profile/' + request.session.get('user'))
     else:
         return redirect('/')
     
@@ -108,8 +148,8 @@ def save_drink(request):
     req_type = request.POST.get('submit')
     if req_type == 'delete' and request.session.get('role') == 'admin':
         active_nav_urls = copy.deepcopy(nav_urls)
-        if request.session.get('user'):
-            active_nav_urls[2]['href'] = '/profile/' + request.session.get('slug')
+        if request.user.is_authenticated:
+            active_nav_urls[2]['href'] = '/profile/' + request.session.get('user')
         context = {
             'nav_urls': active_nav_urls,
             'drink': drink,
@@ -121,32 +161,33 @@ def save_drink(request):
         return redirect('/')
 
 # profile
-def profile(request, slug):
-    active_nav_urls = copy.deepcopy(nav_urls)
-    if request.session.get('user'):
-        active_nav_urls[2]['href'] = '/profile/' + request.session.get('slug')
-    if slug == request.session.get('user'):
+class ProfileView(generic.DetailView):
+    model = UserProfile
+    template_name = 'mixology/profile.html'
+    context_object_name = 'viewuser'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        active_nav_urls = copy.deepcopy(nav_urls)
         active_nav_urls[2]['active'] = True
+        if self.request.user.is_authenticated:
+            active_nav_urls[2]['href'] = '/profile/' + self.request.user.username
+        context['nav_urls'] = active_nav_urls
+        return context
     
-    user = [v for k, v in users.items() if v.slug == slug][0]
-    stats = {
-        'followers': len(user.follows),
-        'following': len([k for k, v in users.items() if user.slug in v.follows]),
-        'drinks': len(user.drinks),
-    }
-    
-    context = {
-        'nav_urls': active_nav_urls,
-        'viewuser': user,
-        'stats': stats,
-    }
-    return render(request, 'mixology/profile.html', context)
+    def get_object(self):
+        username = self.kwargs.get('username')
+        try:
+            user = User.objects.get(username=username)
+            print(UserProfile.objects.get(user=user))
+            print(user)
+            return UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            return None
 
 # about
 def about(request):
     active_nav_urls = copy.deepcopy(nav_urls)
-    if request.session.get('user'):
-        active_nav_urls[2]['href'] = '/profile/' + request.session.get('slug')
         
     context = {
         'nav_urls': active_nav_urls,
@@ -155,8 +196,6 @@ def about(request):
 
 def contact(request):
     active_nav_urls = copy.deepcopy(nav_urls)
-    if request.session.get('user'):
-        active_nav_urls[2]['href'] = '/profile/' + request.session.get('slug')
         
     context = {
         'nav_urls': active_nav_urls,
@@ -164,28 +203,30 @@ def contact(request):
     return render(request, 'mixology/contact.html', context)
 
 # collections
-def collections(request):
-    active_nav_urls = copy.deepcopy(nav_urls)
-    if request.session.get('user'):
-        active_nav_urls[2]['href'] = '/profile/' + request.session.get('slug')
-    else:
-        return redirect('/')
+class CollectionView(generic.ListView):
+    model = Collection
+    template_name = 'mixology/collections.html'
+    context_object_name = 'collections'
     
-    collections = users[request.session.get('user')].collections
-    active_nav_urls[3]['active'] = True
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        active_nav_urls = copy.deepcopy(nav_urls)
+        active_nav_urls[3]['active'] = True
+        if self.request.user.is_authenticated:
+            active_nav_urls[2]['href'] = '/profile/' + self.request.user.username
+        context['nav_urls'] = active_nav_urls
+        return context
     
-    context = {
-        'nav_urls': active_nav_urls,
-        'collections': collections,
-    }
-    return render(request, 'mixology/collections.html', context)
+    def get_queryset(self):
+        collections = self.request.user.collections.all()
+        return collections
 
 # settings logic
 def settings(request):
     active_nav_urls = copy.deepcopy(nav_urls)
     active_nav_urls[4]['active'] = True
-    if request.session.get('user'):
-        active_nav_urls[2]['href'] = '/profile/' + request.session.get('slug')
+    if request.user.is_authenticated:
+        active_nav_urls[2]['href'] = '/profile/' + request.session.get('user')
     else:
         return redirect('/')
     
@@ -195,16 +236,14 @@ def settings(request):
     return render(request, 'mixology/settings.html', context)
 
 def save_settings(request):
-    if not request.session.get('user'):
+    if not request.user.is_authenticated:
         return redirect('/')
     
-    return redirect('/profile/' + request.session.get('slug'))
+    return redirect('/profile/' + request.session.get('user'))
     
 # search logic
 def search(request):
     active_nav_urls = copy.deepcopy(nav_urls)
-    if request.session.get('user'):
-        active_nav_urls[2]['href'] = '/profile/' + request.session.get('slug')
 
     query = request.GET.get('query')
     search_results = [drink for drink in drinks if query.lower() in drink.name.lower() or query.lower() in [i.name for i in drink.ingredients]]
@@ -217,8 +256,8 @@ def search(request):
     return render(request, 'mixology/search.html', context)
 
 # follow logic
-def follow(request, slug):
+def follow(request, username):
     if not request.session.get('user'):
         return redirect('/')
 
-    return redirect('/profile/' + slug)
+    return redirect('/profile/' + username)

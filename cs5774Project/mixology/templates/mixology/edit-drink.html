@@ -4,13 +4,12 @@
 {% block title %} Mixology - Drink Edit {% endblock %}
 
 {% block stylesheet %}<link rel="stylesheet" href="{% static 'css/drink.css' %}" />{% endblock %}
-{% block alert %}{% endblock %}
 {% block content %}
 <div class="edit-drink">
     <h1>Edit {{ drink.name }}</h1>
     <form class="edit-drink-form" method="POST" action="/save-drink/">
         {% csrf_token %}
-        <input type="hidden" name="slug" value="{{ drink.slug }}">
+        <input type="hidden" name="did" value="{{ drink.id }}">
 
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" value="{{ drink.name }}" required><br><br>
@@ -33,7 +32,7 @@
         <input type="file" id="images" name="images" multiple><br><br>
 
         <button type="button" class="btn">Cancel</button>
-        {% if request.session.role == 'admin' %}
+        {% if user.is_superuser %}
         <button type="submit" class="btn" name="submit" value="delete">Delete</button>
         {% endif %}
         <button type="submit" class="btn" name="submit" value="update">Post</button>

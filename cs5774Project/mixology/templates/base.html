@@ -30,10 +30,10 @@
                         <img src="{% static 'assets/icons/search.svg' %}" alt="Search Icon" class="icon" />
                     </button>
                 </form>
-                {% if request.session.user %}
-                <a class="profile" href="/profile/{{request.session.slug}}">
-                    <img class="icon profile-icon" src="{% static 'assets/icons/user.svg' %}" alt="User Icon" />
-                    <p>{{ request.session.user }}</p>
+                {% if user.is_authenticated %}
+                <a class="profile" href="/profile/{{user}}">
+                    <img class="icon profile-icon" src="{% static user.profile.get_pfp_url %}" alt="User Icon" />
+                    <p>{{ user.username }}</p>
                 </a>
                 {% endif %}
                 
@@ -45,7 +45,7 @@
                     <img src="{% static 'assets/logo-md.svg' %}" alt="Logo" />
                     <h2 class="logo">Mixology</h2>
                 </a>
-                {% if request.session.user %}
+                {% if user.is_authenticated %}
                 <div class="nav-links">
                     <ul>
                         {% for url in nav_urls %}
@@ -63,11 +63,11 @@
                     <form class="nav-login-form" action="/login/" method="POST">
                         {% csrf_token %}
                       <input type="text" name="username" placeholder="Username" />
-                      <input type="password" name="pwd" placeholder="Password" />
+                      <input type="password" name="password" placeholder="Password" />
                       <input class="btn" type="submit" value="Log In" />
                     </form>
                     <p>Don't have an account?</p>
-                    <a class="btn" href="/sign-up">Sign Up</a>
+                    <a class="btn" href="/signup/">Sign Up</a>
                 </div>
                 {% endif %}
             </div>
@@ -80,7 +80,7 @@
                     <a href="/contact">Contact</a>
                 </div>
                 <p class="copyright">&copy; 2025 Mixology.</p>
-                {% if request.session.user %}
+                {% if user.is_authenticated %}
                 <a class="logout btn" href="/logout">
                     <img src="{% static 'assets/icons/logout.svg' %}" alt="Logout" class="icon" />
                     <p>Logout</p>
@@ -89,7 +89,15 @@
             </div>
         </nav>
         <div class="content">
-            <div class="alert">{% block alert %}{% endblock %}</div>
+            <div class="alert">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
             {% block content %}{% endblock %}
             <footer>
                 <a href="#top">Back to Top</a>

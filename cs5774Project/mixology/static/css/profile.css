@@ -51,9 +51,3 @@
     flex-direction: column;
     gap: 20px;
 }
-
-.following-label, .following-label:hover {
-    background-color: grey;
-    color: white;
-    /* padding: 5px; */
-}

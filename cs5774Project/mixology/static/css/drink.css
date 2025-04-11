@@ -76,6 +76,10 @@
   color: var(--btn-secondary)
 }
 
+.edit-drink-form .btn, .add-drink-form .btn{
+  width: auto;
+}
+
 @media screen and (max-width: 992px), screen and (max-height: 600px) {
   .drink-details {
     padding: 10px;

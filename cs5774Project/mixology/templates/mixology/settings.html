@@ -5,16 +5,15 @@
 {% block content %}
 <div class="settings-container">
     <h1>Settings</h1>
-    <form class="setings-form" method="POST" action="/save-settings/">
+    <form class="settings-form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" placeholder="Username" />
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="Email" />
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Password" />
-        <label for="confirm-password">Confirm Password</label>
-        <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm Password" />
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ user.profile.name }}">
+        <label for="bio">Bio:</label>
+        <textarea id="bio" name="bio">{{ user.profile.bio }}</textarea>
+        <label for="pfp">Profile Picture:</label>
+        <img id="profile-img" src="{{ user.profile.get_pfp_url }}" alt="Profile Image" />
+        <input type="file" id="pfp" name="pfp">
         <button class="btn" type="submit">Save Changes</button>
     </form>
 </div>

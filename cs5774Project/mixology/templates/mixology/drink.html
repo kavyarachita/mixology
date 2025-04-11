@@ -4,29 +4,30 @@
 {% block title %} Mixology - Drink {% endblock %}
 
 {% block stylesheet %}<link rel="stylesheet" href="{% static 'css/drink.css' %}" />{% endblock %}
+{% block script %}<script src="{% static 'js/drink.js' %}"></script>{% endblock %}
+
 {% block content %}
 <div class="drink-detail">
   <div class="drink-info">
-      <img src="{% static drink.get_image_url %}" alt="Drink" class="drink-image" />
+      <img src="{{ drink.get_image_url }}" alt="Drink" class="drink-image" />
       <div class="drink-text
       ">
           <div class="detail-header">
             <h1>{{ drink.name }}</h1>
-            {% if user.is_authenticated and drink.poster.username == user or user.is_authenticated and user.is_superuser %}
-            <form action="/edit-drink/{{ drink.id }}" method="get">
-                <button class="btn" type="submit">Edit</button>
-            </form>
+            {% if user.is_authenticated and drink.poster.user == user or user.is_authenticated and user.is_superuser %}
+            <a class="btn" href="/edit-drink/{{ drink.id }}">Edit</a>
             {% endif %}
           </div>
-          <a class="user-info" href="/profile/{{ drink.poster.username }}">
+          <a class="user-info" href="/profile/{{ drink.poster.user.username }}">
               <img
               class="icon user-icon"
-              src="{% static drink.poster.profile.get_pfp_url %}"
+              src="{{ drink.poster.get_pfp_url }}"
               alt="User Icon"
               />
-              <p>{{ drink.poster.username }}</p>
+              <p>{{ drink.poster.user.username }}</p>
           </a>
           <p id="last-update">{{ drink.last_updated }}</p>
+          <p id="description">{{ drink.description }}</p>
           <p>Ingredients: </p>
           <ul class="ingredients-list">
             {% for ingredient in drink.get_ingredients %}
@@ -41,8 +42,8 @@
       <h2>Comments</h2>
       <div class="comment comment-output">
           <div class="comment-text">
-              <a href="/profile/{{ drink.poster.username }}">
-                  <img src="{% static user.profile.get_pfp_url %}" alt="User" class="icon" />
+              <a href="/profile/{{ drink.poster.user.username }}">
+                  <img src="{{ user.get_pfp_url }}" alt="User" class="icon" />
                   <p>You</p>
               </a>
               <p id="user-comment">Comment</p>

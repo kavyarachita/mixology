@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
     {% block stylesheet %}{% endblock %}
     <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
-    <script src="{% static 'js/scripts.js' %}"></script>
+    {% block scripts %}{% endblock %}
 </head>
 
 <body>
@@ -25,14 +25,13 @@
                 </a>
                 <form class="search-form" method="GET" action="/search/">
                     <input type="text" class="search-bar" placeholder="Search..." name="query"/>
-                    {% comment %} <input class="btn search-button" type="submit"/> {% endcomment %}
                     <button class="btn search-button" type="submit">
                         <img src="{% static 'assets/icons/search.svg' %}" alt="Search Icon" class="icon" />
                     </button>
                 </form>
                 {% if user.is_authenticated %}
                 <a class="profile" href="/profile/{{user}}">
-                    <img class="icon profile-icon" src="{% static user.profile.get_pfp_url %}" alt="User Icon" />
+                    <img class="icon profile-icon" src="{{ user.profile.get_pfp_url }}" alt="User Icon" />
                     <p>{{ user.username }}</p>
                 </a>
                 {% endif %}
@@ -59,15 +58,22 @@
                     </ul>
                 </div>
                 {% else %}
+                <a id="collapsed-login" href="/login/">
+                    <img src="{% static 'assets/icons/logout.svg' %}" alt="Login" class="icon" />
+                </a>
                 <div class="login-container">
-                    <form class="nav-login-form" action="/login/" method="POST">
+                    <form class="nav-login-form" action="/process-login/" method="POST">
                         {% csrf_token %}
-                      <input type="text" name="username" placeholder="Username" />
-                      <input type="password" name="password" placeholder="Password" />
-                      <input class="btn" type="submit" value="Log In" />
+                      <div>
+                        <input type="text" name="username" placeholder="Username" />
+                        <input type="password" name="password" placeholder="Password" />
+                      </div>
+                      <div>
+                        <button class="btn btn-secondary" type="submit" value="Log In" >Log In</button>
+                        <a class="btn" href="/signup/">Sign Up</a>
+                      </div>
                     </form>
-                    <p>Don't have an account?</p>
-                    <a class="btn" href="/signup/">Sign Up</a>
+                    
                 </div>
                 {% endif %}
             </div>
@@ -81,7 +87,7 @@
                 </div>
                 <p class="copyright">&copy; 2025 Mixology.</p>
                 {% if user.is_authenticated %}
-                <a class="logout btn" href="/logout">
+                <a class="logout" href="/logout">
                     <img src="{% static 'assets/icons/logout.svg' %}" alt="Logout" class="icon" />
                     <p>Logout</p>
                 </a>

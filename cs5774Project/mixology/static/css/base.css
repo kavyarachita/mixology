@@ -429,7 +429,7 @@ div.login-container div {
 
 /* FORMS */
 
-form {
+form, .comment-form {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -438,7 +438,7 @@ form {
 
 input { min-width: 0 }
 
-form input, .form textarea {
+form input, .form textarea, .comment-form input {
     padding: 10px 15px;
     border: none;
     border-radius: 20px;
@@ -465,7 +465,7 @@ form .submit-btns {
     justify-content: space-between;
 }
 
-form .btn, .login-container .btn {
+form .btn, .login-container .btn, .comment-form .btn {
     width: 100%;
 }
 

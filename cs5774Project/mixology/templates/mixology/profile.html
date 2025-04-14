@@ -41,7 +41,11 @@
         </div>
     </div>
     <div class="profile-content">
-        
+        <div class="tags-container">
+            <button class="btn tag">All</button>
+            <button class="btn tag">Recent</button>
+            <button class="btn tag">Oldest</button>
+        </div>
         <div class="cards-container">
             {% for drink in viewuser.get_drinks %}
                 <div class="card" href="/drink/{{ drink.id }}">

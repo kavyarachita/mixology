@@ -4,7 +4,7 @@
 {% block title %} Mixology - Drink {% endblock %}
 
 {% block stylesheet %}<link rel="stylesheet" href="{% static 'css/drink.css' %}" />{% endblock %}
-{% block script %}<script src="{% static 'js/drink.js' %}"></script>{% endblock %}
+{% block scripts %}<script src="{% static 'js/drink.js' %}"></script>{% endblock %}
 
 {% block content %}
 <div class="drink-detail">
@@ -40,19 +40,26 @@
   </div>
   <div class="drink-comments">
       <h2>Comments</h2>
-      <div class="comment comment-output">
-          <div class="comment-text">
-              <a href="/profile/{{ drink.poster.user.username }}">
-                  <img src="{{ user.get_pfp_url }}" alt="User" class="icon" />
-                  <p>You</p>
-              </a>
-              <p id="user-comment">Comment</p>
-          </div>
+      {% for comment in comments %}
+      <div class="comment">
+        <div class="comment-header">
+            <a href="/profile/{{ comment.user.username }}">
+                <img src="{{ comment.user.profile.get_pfp_url }}" alt="User" class="icon" />
+                <p>{{ comment.user.username }}</p>
+            </a>
+            <p>{{ comment.posted }}</p>
+        </div>
+        <p id="user-comment">{{ comment.text }}</p>
+        </div>
+      {% endfor %}
+      {% if user.is_authenticated %}
+      <div class="comment-form">
+
+        <textarea id="comment-text" class="comment-input" placeholder="Add a comment..." name="comment-input"></textarea>
+        <button id="post-comment-btn" class="btn comment-btn" data-user-id="{{ user.id }}" data-drink-id="{{ drink.id }}" data-drink-url="{% url 'mixology:comment-drink' %}">Post Comment</button>
       </div>
-      <form class="comment-form" method="get" action="">
-          <textarea class="comment-input" placeholder="Add a comment..." name="comment-input"></textarea>
-          <input class="btn comment-btn" type="submit" value="Post Comment" />
-      </form>
+        {% endif %}
+      
   </div>
 </div>
 {% endblock %}

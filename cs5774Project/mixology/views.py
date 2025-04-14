@@ -114,6 +114,7 @@ class DrinkView(generic.DetailView):
         if self.request.user.is_authenticated:
             active_nav_urls[2]['href'] = '/profile/' + self.request.user.username
         context['nav_urls'] = active_nav_urls
+        context['comments'] = self.object.comments.all()
         return context
     
     def get_object(self):
@@ -142,7 +143,7 @@ class EditDrinkView(generic.UpdateView):
         if submit_type == 'delete':
             drink = self.get_object()
             drink.delete()
-            messages.success(self.request, 'Drink deleted successfully!')
+            messages.warning(self.request, 'Drink deleted successfully!')
             return redirect('mixology:home') 
         
         drink = form.instance
@@ -160,7 +161,7 @@ class EditDrinkView(generic.UpdateView):
                 ingredient, created = Ingredient.objects.get_or_create(name=name)
                 drink.ingredients.add(ingredient)
 
-        messages.success(self.request, 'Drink updated successfully!')
+        messages.info(self.request, 'Drink updated successfully!')
         return response
 
 class AddDrinkView(generic.CreateView):
@@ -289,7 +290,7 @@ class SettingsView(generic.UpdateView):
             user_profile.pfp = image
         response = super().form_valid(form)
         
-        messages.success(self.request, 'Profile updated successfully!')
+        messages.info(self.request, 'Profile updated successfully!')
         return response
 
 
@@ -316,6 +317,9 @@ def search(request):
     else:
         messages.error(request, 'Please enter a search term.')
         return redirect('mixology:home')
+    
+    if request.user.is_authenticated:
+            active_nav_urls[2]['href'] = '/profile/' + request.user.username
     
     context = {
         'nav_urls': active_nav_urls,
@@ -348,3 +352,52 @@ def follow(request):
     else:
         return JsonResponse({'error': 'Invalid request'}, status=400)
     
+
+def comment(request):
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    if request.method == 'POST' and is_ajax:
+        uid = request.POST.get('user_id')
+        did = request.POST.get('drink_id')
+        comment = request.POST.get('comment')
+        try:
+            comment_obj = Comment(text=comment)
+            comment_obj.drink = Drink.objects.get(pk=did)
+            comment_obj.user = User.objects.get(pk=uid)
+            comment_obj.posted = timezone.now()
+            comment_obj.save()
+           
+            return JsonResponse({'success': True, 'comment': comment, 'posted': comment_obj.posted, 'username': comment_obj.user.username, 'pfp_url':comment_obj.user.profile.get_pfp_url()}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=200)
+        except Drink.DoesNotExist:
+            return JsonResponse({'error': 'Drink not found'}, status=200)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+    
+def profile_order(request):
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    if request.method == 'GET' and is_ajax:
+        uid = request.GET.get('uid')
+        filter = request.GET.get('filter')
+        try:
+            user = User.objects.get(pk=uid)
+            drinks = user.profile.drinks.all()
+            if filter == 'all':
+                drinks = drinks.order_by('-id')
+            elif filter == 'recent':
+                drinks = drinks.order_by('-last_updated')
+            elif filter == 'oldest':
+                drinks = drinks.order_by('last_updated')
+            drink_data = []
+            for drink in drinks:
+                drink_data.append({
+                    'id': drink.id,
+                    'name': drink.name,
+                    'image_url': drink.get_image_url(),
+                    'last_updated': drink.last_updated,
+                })
+            return JsonResponse({'success': True, 'drinks': drink_data}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=200)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)

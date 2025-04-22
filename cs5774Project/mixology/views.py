@@ -1,7 +1,8 @@
 import copy
+from django.utils import timezone
 from django.contrib import messages, auth
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import loader
 from django.urls import reverse
 from django.views import generic
@@ -25,6 +26,12 @@ def signup(request):
     }
     return render(request, 'mixology/signup.html', context)
 
+def login(request):
+    context = {
+        'nav_urls': nav_urls,
+    }
+    return render(request, 'mixology/login.html', context)
+
 def process_signup(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -40,9 +47,10 @@ def process_signup(request):
         
         messages.add_message(request, messages.SUCCESS, 'Account created successfully for %s!' % username)
         
-        # Log user in and redirect to the home page
-        return redirect('mixology:home')
-    
+        # Log the user in
+        auth.login(request, user)
+        request.session['user'] = username
+        return redirect('/')
     return signup(request)
 
 # login/logout
@@ -80,11 +88,18 @@ class IndexView(generic.ListView):
         if self.request.user.is_authenticated:
             active_nav_urls[2]['href'] = '/profile/' + self.request.user.username
         context['nav_urls'] = active_nav_urls
+        context['filter'] = self.request.GET.get('filter', 'all')
         return context
 
     def get_queryset(self):
-        drinks = Drink.objects.filter(status=Drink.Status.PUBLISHED).order_by('-last_updated')
-        return sorted(drinks, key=lambda drink: drink.last_updated, reverse=True)
+        filter_val = self.request.GET.get('filter', 'all')
+        drinks = Drink.objects.filter(status=Drink.Status.PUBLISHED)
+        
+        if filter_val == 'following' and self.request.user.is_authenticated:
+            following_users = self.request.user.profile.get_following().all()
+            drinks = drinks.filter(poster__in=following_users)
+
+        return drinks.order_by('-last_updated')
 
 # drink logic
 
@@ -99,66 +114,97 @@ class DrinkView(generic.DetailView):
         if self.request.user.is_authenticated:
             active_nav_urls[2]['href'] = '/profile/' + self.request.user.username
         context['nav_urls'] = active_nav_urls
+        context['comments'] = self.object.comments.all()
         return context
     
     def get_object(self):
         drink_id = self.kwargs.get('did')
         return Drink.objects.get(pk=drink_id)
 
-def add_drink(request):
-    active_nav_urls = copy.deepcopy(nav_urls)
-    if request.user.is_authenticated:
-        active_nav_urls[2]['href'] = '/profile/' + request.session.get('user')
-    else:
-        return redirect('/')
-    active_nav_urls[1]['active'] = True
+class EditDrinkView(generic.UpdateView):
+    model = Drink
+    template_name = 'mixology/edit-drink.html'
+    fields = ['name', 'description', 'instructions', 'ingredients', 'image']
     
-    context = {
-        'nav_urls': active_nav_urls,
-    }
-    return render(request, 'mixology/add-drink.html', context)
-
-def edit_drink(request, slug):
-    active_nav_urls = copy.deepcopy(nav_urls)
-    if not request.user.is_authenticated:
-        return redirect('/')
-    
-    drink = [drink for drink in drinks if drink.slug == slug][0]
-    
-    context = {
-        'nav_urls': active_nav_urls,
-        'drink': drink,
-    }
-    return render(request, 'mixology/edit-drink.html', context)
-
-def delete_drink(request):
-    if not request.user.is_authenticated:
-        return redirect('/')
-    
-    if request.session.get('role') == 'admin' and request.POST.get('submit') == 'delete':
-        # TODO: delete drink
-        return redirect('/profile/' + request.session.get('user'))
-    else:
-        return redirect('/')
-    
-
-def save_drink(request):
-    # TODO: update drink
-    drink = [drink for drink in drinks if drink.slug == request.POST.get('slug')][0]
-    req_type = request.POST.get('submit')
-    if req_type == 'delete' and request.session.get('role') == 'admin':
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         active_nav_urls = copy.deepcopy(nav_urls)
-        if request.user.is_authenticated:
-            active_nav_urls[2]['href'] = '/profile/' + request.session.get('user')
-        context = {
-            'nav_urls': active_nav_urls,
-            'drink': drink,
-        }
-        return render(request, 'mixology/delete-drink.html', context)
-    elif req_type == 'update':
-        return redirect('/drink/' + drink.slug)
-    else:
-        return redirect('/')
+        if self.request.user.is_authenticated:
+            active_nav_urls[2]['href'] = '/profile/' + self.request.user.username
+        context['nav_urls'] = active_nav_urls
+        return context
+    
+    def get_object(self):
+        return get_object_or_404(Drink, pk=self.kwargs.get('did'))
+    
+    def form_valid(self, form):
+        submit_type = self.request.POST.get('submit', 'save')
+        # Handle the delete action
+        if submit_type == 'delete':
+            drink = self.get_object()
+            drink.delete()
+            messages.warning(self.request, 'Drink deleted successfully!')
+            return redirect('mixology:home') 
+        
+        drink = form.instance
+        drink.last_updated = timezone.now()
+        image = self.request.FILES.get('image')
+        if image:
+            drink.image = image
+        response = super().form_valid(form)
+        drink.ingredients.clear()
+
+        ingredient_names = self.request.POST.getlist('ingredients[]')
+        for name in ingredient_names:
+            name = name.strip().lower()
+            if name:
+                ingredient, created = Ingredient.objects.get_or_create(name=name)
+                drink.ingredients.add(ingredient)
+
+        messages.info(self.request, 'Drink updated successfully!')
+        return response
+
+class AddDrinkView(generic.CreateView):
+    model = Drink
+    template_name = 'mixology/add-drink.html'
+    fields = ['name', 'description', 'instructions', 'ingredients', 'image']
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        active_nav_urls = copy.deepcopy(nav_urls)
+        if self.request.user.is_authenticated:
+            active_nav_urls[2]['href'] = '/profile/' + self.request.user.username
+        context['nav_urls'] = active_nav_urls
+        return context
+    
+    def form_valid(self, form):
+        print(f"Form data: {self.request.POST}")
+        drink = form.instance
+        drink.poster = self.request.user.profile
+        drink.last_updated = timezone.now()
+        drink.status = Drink.Status.PUBLISHED
+        image = self.request.FILES['image']
+        if image:
+            drink.image = image
+        response = super().form_valid(form)
+
+        ingredient_names = self.request.POST.getlist('ingredients[]')
+        print(ingredient_names)
+        for name in ingredient_names:
+            name = name.strip().lower()
+            if name:
+                ingredient, created = Ingredient.objects.get_or_create(name=name)
+                drink.ingredients.add(ingredient)
+                print(f"Added ingredient: {ingredient.name}")
+
+        messages.success(self.request, 'Drink added successfully!')
+        return response
+    
+    def form_invalid(self, form):
+        print("Form is invalid")
+        print(form.errors)  # This will show you exactly what failed
+        return super().form_invalid(form)
+
 
 # profile
 class ProfileView(generic.DetailView):
@@ -171,17 +217,14 @@ class ProfileView(generic.DetailView):
         active_nav_urls = copy.deepcopy(nav_urls)
         active_nav_urls[2]['active'] = True
         if self.request.user.is_authenticated:
-            active_nav_urls[2]['href'] = '/profile/' + self.request.user.username
+            active_nav_urls[2]['href'] = '/s.' + self.request.user.username
         context['nav_urls'] = active_nav_urls
         return context
     
     def get_object(self):
         username = self.kwargs.get('username')
         try:
-            user = User.objects.get(username=username)
-            print(UserProfile.objects.get(user=user))
-            print(user)
-            return UserProfile.objects.get(user=user)
+            return UserProfile.objects.get(user__username=username)
         except UserProfile.DoesNotExist:
             return None
 
@@ -218,35 +261,65 @@ class CollectionView(generic.ListView):
         return context
     
     def get_queryset(self):
-        collections = self.request.user.collections.all()
+        collections = self.request.user.profile.collections.all()
         return collections
 
 # settings logic
-def settings(request):
-    active_nav_urls = copy.deepcopy(nav_urls)
-    active_nav_urls[4]['active'] = True
-    if request.user.is_authenticated:
-        active_nav_urls[2]['href'] = '/profile/' + request.session.get('user')
-    else:
-        return redirect('/')
+class SettingsView(generic.UpdateView):
+    model = UserProfile
+    template_name = 'mixology/settings.html'
+    fields = ['name', 'bio', 'pfp']
     
-    context = {
-        'nav_urls': active_nav_urls,
-    }
-    return render(request, 'mixology/settings.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        active_nav_urls = copy.deepcopy(nav_urls)
+        active_nav_urls[4]['active'] = True
+        if self.request.user.is_authenticated:
+            active_nav_urls[2]['href'] = '/profile/' + self.request.user.username
+        context['nav_urls'] = active_nav_urls
+        return context
+    
+    def get_object(self):
+        return get_object_or_404(UserProfile, user=self.request.user)
+    
+    def form_valid(self, form):
+        print(f"Form data: {self.request.POST}")
+        user_profile = form.instance
+        image = self.request.FILES.get('pfp')
+        if image:
+            user_profile.pfp = image
+        response = super().form_valid(form)
+        
+        messages.info(self.request, 'Profile updated successfully!')
+        return response
 
-def save_settings(request):
-    if not request.user.is_authenticated:
-        return redirect('/')
-    
-    return redirect('/profile/' + request.session.get('user'))
-    
+
 # search logic
 def search(request):
     active_nav_urls = copy.deepcopy(nav_urls)
 
     query = request.GET.get('query')
-    search_results = [drink for drink in drinks if query.lower() in drink.name.lower() or query.lower() in [i.name for i in drink.ingredients]]
+    
+    search_results = []
+    
+    if query:
+        name_results = list(Drink.objects.filter(name__icontains=query, status=Drink.Status.PUBLISHED))
+        ingredient_results = list(Drink.objects.filter(ingredients__name__icontains=query, status=Drink.Status.PUBLISHED))
+
+        all_results = {drink.id: drink for drink in name_results + ingredient_results}
+
+        search_results = sorted(all_results.values(), key=lambda d: d.last_updated, reverse=True)
+
+        if not search_results:
+            messages.warning(request, f'No results found for "{query}"')
+        else:
+            messages.success(request, f'Found {len(search_results)} results for "{query}"')
+    else:
+        messages.error(request, 'Please enter a search term.')
+        return redirect('mixology:home')
+    
+    if request.user.is_authenticated:
+            active_nav_urls[2]['href'] = '/profile/' + request.user.username
     
     context = {
         'nav_urls': active_nav_urls,
@@ -256,8 +329,75 @@ def search(request):
     return render(request, 'mixology/search.html', context)
 
 # follow logic
-def follow(request, username):
-    if not request.session.get('user'):
-        return redirect('/')
+def follow(request):
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    if request.method == 'POST' and is_ajax:
+        uid = request.POST.get('user_id')
+        try:
+            user = User.objects.get(pk=uid)
+            is_following = request.user.profile.follows.filter(pk=uid).exists()
+            follow_count = request.user.profile.follows.count()
+            if is_following:
+                request.user.profile.follows.remove(user.profile)
+                follow_count -= 1
+                is_following = False
+            else:
+                request.user.profile.follows.add(user.profile)
+                follow_count += 1
+                is_following = True
+            request.user.profile.save()
+            return JsonResponse({'success': True, 'follower_count': follow_count, 'is_following': is_following}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=200)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+    
 
-    return redirect('/profile/' + username)
+def comment(request):
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    if request.method == 'POST' and is_ajax:
+        uid = request.POST.get('user_id')
+        did = request.POST.get('drink_id')
+        comment = request.POST.get('comment')
+        try:
+            comment_obj = Comment(text=comment)
+            comment_obj.drink = Drink.objects.get(pk=did)
+            comment_obj.user = User.objects.get(pk=uid)
+            comment_obj.posted = timezone.now()
+            comment_obj.save()
+           
+            return JsonResponse({'success': True, 'comment': comment, 'posted': comment_obj.posted, 'username': comment_obj.user.username, 'pfp_url':comment_obj.user.profile.get_pfp_url()}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=200)
+        except Drink.DoesNotExist:
+            return JsonResponse({'error': 'Drink not found'}, status=200)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+    
+def profile_order(request):
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    if request.method == 'GET' and is_ajax:
+        uid = request.GET.get('uid')
+        filter = request.GET.get('filter')
+        try:
+            user = User.objects.get(pk=uid)
+            drinks = user.profile.drinks.all()
+            if filter == 'all':
+                drinks = drinks.order_by('-id')
+            elif filter == 'recent':
+                drinks = drinks.order_by('-last_updated')
+            elif filter == 'oldest':
+                drinks = drinks.order_by('last_updated')
+            drink_data = []
+            for drink in drinks:
+                drink_data.append({
+                    'id': drink.id,
+                    'name': drink.name,
+                    'image_url': drink.get_image_url(),
+                    'last_updated': drink.last_updated,
+                })
+            return JsonResponse({'success': True, 'drinks': drink_data}, status=200)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=200)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)

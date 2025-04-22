@@ -4,39 +4,46 @@
 {% block title %} Mixology - Drink Edit {% endblock %}
 
 {% block stylesheet %}<link rel="stylesheet" href="{% static 'css/drink.css' %}" />{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/drink-form.js' %}"></script>
+{% endblock %}
 {% block content %}
 <div class="edit-drink">
     <h1>Edit {{ drink.name }}</h1>
-    <form class="edit-drink-form" method="POST" action="/save-drink/">
+    <form class="edit-drink-form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="hidden" name="did" value="{{ drink.id }}">
 
         <label for="name">Name:</label>
-        <input type="text" id="name" name="name" value="{{ drink.name }}" required><br><br>
+        <input type="text" id="name" name="name" value="{{ drink.name }}" required>
 
         <label for="description">Description:</label>
-        <textarea id="description" name="description" required>{{ drink.description }}</textarea><br><br>
+        <textarea id="description" name="description" required>{{ drink.description }}</textarea>
 
         <label for="ingredients">Ingredients:</label>
         <ul id="ingredients">
-        {% for i in drink.ingredients %}
+        {% for i in drink.get_ingredients %}
             <li>
-                <input type="text" name="ingredient" value="{{ i.name }}" required>
-                <button type="button" class="btn">Remove</button>
+                <input type="text" name="ingredients[]" value="{{ i.name }}" required>
+                <button onclick="removeIngredient()" type="button" class="btn">Remove</button>
             </li>
         {% endfor %}
         </ul>
-        <button type="button" class="btn">Add Ingredient</button><br><br>
+        <button onclick="addIngredient()" type="button" class="btn">Add Ingredient</button>
+
+        <label for="instructions">Instructions:</label>
+        <textarea id="instructions" name="instructions" required>{{ drink.instructions }}</textarea>
 
         <label for="images">Upload Images:</label>
-        <input type="file" id="images" name="images" multiple><br><br>
-
-        <button type="button" class="btn">Cancel</button>
-        {% if user.is_superuser %}
-        <button type="submit" class="btn" name="submit" value="delete">Delete</button>
-        {% endif %}
-        <button type="submit" class="btn" name="submit" value="update">Post</button>
-    </form>
+        <input type="file" id="image" name="image" value="{{ current_image }}">
+        <div class="submit-btns">
+            {% if user.is_superuser %}
+            <button type="submit" class="btn error" name="submit" value="delete" onclick="confirmDelete(event)">Delete</button>
+            {% endif %}
+            <button type="submit" class="btn btn-secondary" name="submit" value="update">Update Post</button>
+        </div>
+        <br>
+        <a class="btn warning" href="/">Cancel</a>
 
 </div>
 {% endblock %}

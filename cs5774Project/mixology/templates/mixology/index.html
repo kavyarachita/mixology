@@ -5,28 +5,40 @@
 {% block title %} Mixology - Home {% endblock %}
 {% block content %}
     <div class="home-feed-container">
-        <h1>Home</h1>
+        <h1>
+            {% if user.is_authenticated %}
+                Welcome back, {{ user.username }}!
+            {% else %}
+                Welcome to Mixology!
+            {% endif %}
+        </h1>
+        <div class="tags-container">
+            <a class="btn tag" href="/">All</a>
+            {% if user.is_authenticated %}
+            <a class="btn tag" href="?filter=following">Following</a>
+            {% endif %}
+        </div>
         <div class="cards-container">
             {% for drink in feed_drinks %}
                 <div class="card" href="/drink/{{ drink.id }}">
-                    <img class="card-img" src="{% static drink.get_image_url %}" alt="Drink Image" />
+                    <img class="card-img" src="{{ drink.get_image_url }}" alt="Drink Image" />
                     <div class="card-content">
                     <h2>{{ drink.name }}</h2>
-                    <a class="user-info" href="/profile/{{ drink.poster.username }}">
+                    <a class="user-info" href="/profile/{{ drink.poster.user.username }}">
                         <img
                         class="icon user-icon"
-                        src="{% static drink.poster.profile.get_pfp_url %}"
+                        src="{{ drink.poster.get_pfp_url }}"
                         alt="User Icon"
                         />
-                        <p>{{ drink.poster.username }}</p>
+                        <p>{{ drink.poster.user.username }}</p>
                     </a>
                     <div class="view-more">
-                        <form action="/drink/{{ drink.id }}" method="get">
-                            <button type="submit">View More &rarr;</button>
-                        </form>
+                        <a href="/drink/{{ drink.id }}">
+                            View More &rarr;
+                          </a>
                         <div>
                             <p>{{ drink.last_updated|naturalday }}</p>
-                            {% if user.is_authenticated and drink.poster.username == user or user.is_authenticated and user.is_superuser %}
+                            {% if user.is_authenticated and drink.poster.user == user or user.is_authenticated and user.is_superuser %}
                             <form action="/edit-drink/{{ drink.id }}" method="get">
                                 <button type="submit">Edit</button>
                             </form>

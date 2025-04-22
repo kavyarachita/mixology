@@ -58,22 +58,28 @@
   border-radius: 10px;
 }
 
-.comment-text a {
+.comment-header a {
     display: flex;
     align-items: center;
     flex-direction: row;
     gap: 5px;
 }
 
-
-.comment-output {
-  display: none;
+.comment-header{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 
 #last-update {
   font-size: small;
   font-style: italic;
   color: var(--btn-secondary)
+}
+
+.edit-drink-form .btn, .add-drink-form .btn{
+  width: auto;
 }
 
 @media screen and (max-width: 992px), screen and (max-height: 600px) {

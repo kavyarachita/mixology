@@ -1,59 +1,70 @@
-{% extends '../base.html' %}
-{% load static %}
-
-{% block title %} Mixology - Collections {% endblock %}
-
-{% block stylesheet %}<link rel="stylesheet" href="{% static 'css/collections.css' %}" />{% endblock %}
+{% extends '../base.html' %} {% load static %} {% block title %} Mixology -
+Collections {% endblock %} {% block stylesheet %}<link
+  rel="stylesheet"
+  href="{% static 'css/collections.css' %}"
+/>{% endblock %}
+{% block scripts %}<script src="{% static 'js/collection.js' %}"></script>{% endblock %}
 {% block content %}
 <div class="collection-container">
-    <h1>My Collections</h1>
-    <div>
-      <h2>Create a New Collection</h2>
-      <form class="create-collection-form" action="/create-collection/" method="post">
-        {% csrf_token %}
-        <label for="collection-name">Collection Name:</label>
-        <input type="text" id="collection-name" name="collection_name" required>
-        <button class="btn" type="submit">Create Collection</button>
-      </form>
+  <h1>{{ owner }}'s Collections</h1>
+  {% if user.is_authenticated and user.is_superuser or user.is_authenticated and owner == user %}
+  <div>
+    <h2>Create a New Collection</h2>
+    <form class="create-collection-form" action="{% url 'mixology:create-collection' %}" method="POST">
+      {% csrf_token %}
+      <label for="collection-name">Collection Name:</label>
+      <input type="text" id="collection-name" name="collection-name" required />
+      <button class="btn" type="submit">Create Collection</button>
+    </form>
+  </div>
+  {% endif %}
+
+  <div class="table-of-contents">
+    <h2>Table of Contents</h2>
+    <ul class="collection-targets-list">
+      {% for collection in collections %}
+      <li><a href="#{{ collection.id }}">{{ collection.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% for collection in collections %}
+  <div class="collection" id="{{ collection.id }}">
+    <div class="collection-header">
+      <h2>{{ collection.name }}</h2>
+      <div>
+        <a
+          class="btn"
+          href="/collection/{{ collection.id }}"
+          >View All</a>
+      </div>
     </div>
-    <div class="table-of-contents">
-        <h2>Table of Contents</h2>
-        <ul class="collection-targets-list">
-            {% for collection in collections %}
-            <li><a href="#{{ collection.id }}">{{ collection.name }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% for collection in collections %}
-    <div class="collection" id="{{ collection.id }}">
-        <h2>{{ collection.name }}</h2>
-        <div class="collection-content">
-          {% for drink in collection.drinks.all %}
-          <div class="card" href="/drink/{{ drink.id }}">
-            <img class="card-img" src="{{ drink.get_image_url }}" alt="Drink Image" />
-            <div class="card-content">
-              <h2>{{ drink.name }}</h2>
-              <a class="user-info" href="/profile/{{ drink.poster.user.username }}">
-                <img
-                  class="icon user-icon"
-                  src="{{ drink.poster.get_pfp_url }}"
-                  alt="User Icon"
-                />
-                <p>{{ drink.poster.user.username }}</p>
-              </a>
-              <div class="view-more">
-                <a href="/drink/{{ drink.id }}">
-                  View More &rarr;
-                </a>
-                <a href="/drink/{{ drink.id }}">
-                  Remove from Collection
-                </a>
-            </div>
-            </div>
+    <div class="collection-content">
+      {% for drink in collection.drinks.all|slice:":3" %}
+      <div class="card" href="/drink/{{ drink.id }}">
+        <img
+          class="card-img"
+          src="{{ drink.get_image_url }}"
+          alt="Drink Image"
+        />
+        <div class="card-content">
+          <h2>{{ drink.name }}</h2>
+          <a class="user-info" href="/profile/{{ drink.poster.user.username }}">
+            <img
+              class="icon user-icon"
+              src="{{ drink.poster.get_pfp_url }}"
+              alt="User Icon"
+            />
+            <p>{{ drink.poster.user.username }}</p>
+          </a>
+          <div class="view-more">
+            <a href="/drink/{{ drink.id }}"> View More &rarr; </a>
+          </div>
         </div>
-          {% endfor %}
-        </div>
+      </div>
+      {% endfor %}
+      
     </div>
-    {% endfor %}
+  </div>
+  {% endfor %}
 </div>
 {% endblock %}

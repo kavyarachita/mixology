@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'mixology.apps.MixologyConfig',
+    'actions.apps.ActionsConfig',
 ]
 
 MIDDLEWARE = [

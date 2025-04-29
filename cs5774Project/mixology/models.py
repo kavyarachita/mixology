@@ -9,7 +9,6 @@ from django.urls import reverse
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE, related_name='profile', null=True, blank=True)
-    name = models.CharField(max_length=200)
     bio = models.TextField(max_length=2000, blank=True)
     follows = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
     pfp = models.ImageField(upload_to='profile_pics/', blank=True, null=True, default='profile_pics/user.svg')
@@ -20,6 +19,16 @@ class UserProfile(models.Model):
     def get_absolute_url(self):
         return reverse("mixology:profile", kwargs={"username": self.user.username})
     
+    def getJSON(self):
+        return {
+            'username': self.user.username,
+            'bio': self.bio,
+            'followers': self.followers.count(),
+            'following': self.follows.count(),
+            'drinks': self.drinks.count(),
+            'pfp': self.get_pfp_url(),
+            'url': self.get_absolute_url(),
+        }
     
     def get_pfp_url(self):
         return self.pfp.url
@@ -70,7 +79,20 @@ class Drink(models.Model):
     status = models.CharField(max_length=2, choices=Status.choices, default=Status.DRAFT)
     
     def __str__(self):
-        return self.name
+        return f'{self.name} ~ {self.poster.user.username}'
+    
+    def getJSON(self):
+        return {
+            'id': self.pk,
+            'name': self.name,
+            'description': self.description,
+            'instructions': self.instructions,
+            'last_updated': self.last_updated,
+            'image': self.get_image_url(),
+            'ingredients': [ingredient.name for ingredient in self.ingredients.all()],
+            'status': self.status,
+            'url': self.get_absolute_url(),
+        }
     
     class Meta:
         ordering = ['name']
@@ -89,10 +111,22 @@ class Drink(models.Model):
 class Collection(models.Model):
     name = models.CharField(max_length=200)
     owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='collections')
-    drinks = models.ManyToManyField(Drink, blank=True)
+    drinks = models.ManyToManyField(Drink, blank=True, related_name='collections')
     
     def __str__(self):
-        return self.name
+        return f'{self.name} ~ {self.owner.user.username}'
+    
+    def getJSON(self):
+        return {
+            'id': self.pk,
+            'name': self.name,
+            'drinks': [drink.getJSON() for drink in self.drinks.all()],
+            'owner': self.owner.user.username,
+            'url': self.get_absolute_url(),
+        }
+    
+    def get_absolute_url(self):
+        return reverse("collections", kwargs={"username": self.owner.user.username})
     
     class Meta:
         ordering = ['name']
@@ -105,7 +139,20 @@ class Comment(models.Model):
     posted = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f'{self.user.username} - {self.drink.name}'
+        return f'{self.drink.name}: {self.text} ~ {self.user.username}'
     
+    def getJSON(self):
+        return {
+            'id': self.pk,
+            'drink': self.drink.getJSON(),
+            'user': self.user.username,
+            'text': self.text,
+            'posted': self.posted,
+            'url': self.get_absolute_url(),
+        }
+    
+    def get_absolute_url(self):
+        # get rid of the slash at the end of the URL
+        return reverse("mixology:drink", kwargs={"did": self.drink.pk}).rstrip('/') + f"#comment-{self.pk}"
     class Meta:
         ordering = ['-posted']

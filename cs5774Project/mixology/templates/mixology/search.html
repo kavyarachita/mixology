@@ -7,7 +7,21 @@
 <div class="results-container">
     <h1>Search Results for {{ query }}</h1>
     <div class="results cards-container">
-        {% for drink in search_results %}
+        {% for u in user_results %}
+            <div class="card profile-card" href="/profile/{{ u.username }}">
+                <img class="card-img" src="{{ u.profile.get_pfp_url }}" alt="User Image" />
+                <div class="card-content">
+                    <h2>{{ u.username }}</h2>
+                    <p>{{ u.profile.bio }}</p>
+                    <a class="user-info" href="/profile/{{ u.username }}">
+                        View Profile &rarr;
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="results cards-container">
+        {% for drink in post_results %}
             <div class="card" href="/drink/{{ drink.id }}">
                 <img class="card-img" src="{{ drink.get_image_url }}" alt="Drink Image" />
                 <div class="card-content">
@@ -24,6 +38,14 @@
                     <a href="/drink/{{ drink.id }}">
                         View More &rarr;
                       </a>
+                    <div>
+                        <p>{{ drink.last_updated|naturalday }}</p>
+                        {% if user.is_authenticated and drink.poster.user == user or user.is_authenticated and user.is_superuser %}
+                        <form action="/edit-drink/{{ drink.id }}" method="get">
+                            <button type="submit">Edit</button>
+                        </form>
+                        {% endif %}
+                    </div>
                 </div>
                 </div>
             </div>

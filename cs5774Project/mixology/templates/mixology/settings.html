@@ -2,18 +2,60 @@
 {% load static %}
 
 {% block title %} Mixology - Settings {% endblock %}
+{% block scripts %}{% endblock %}
 {% block content %}
 <div class="settings-container">
     <h1>Settings</h1>
+    {% if user_profile.user.is_superuser %}
+    <p class="warning">Warning: Changing your role will revoke your admin status.</p>
+    {% endif %}
     <form class="settings-form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" value="{{ user.profile.name }}">
+        <div class="form-row">
+            <div class="form-col">
+                <label for="username">Username: {{ user_profile.user.username }}</label>
+            </div>
+            <div class="form-col">
+                <label for="role">Role (admin only):</label>
+                <select id="role" name="role" {% if not user.is_superuser %}disabled{% endif %} >
+                    <option value="user" {% if not user_profile.user.is_superuser %}selected{% endif %}>User</option>
+                    <option value="admin" {% if user_profile.user.is_superuser %}selected{% endif %}>Admin</option>
+                </select>               
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-col">
+                <label for="firstname">First Name:</label>
+                <input type="text" id="first-name" name="first-name" value="{{ user_profile.user.first_name }}" required>
+            </div>
+            <div class="form-col">
+                <label for="lastname">Last Name:</label>
+                <input type="text" id="last-name" name="last-name" value="{{ user_profile.user.last_name }}" required>
+            </div>
+        </div>
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" value="{{ user_profile.user.email }}" required>
+        
         <label for="bio">Bio:</label>
-        <textarea id="bio" name="bio">{{ user.profile.bio }}</textarea>
-        <label for="pfp">Profile Picture:</label>
-        <img id="profile-img" src="{{ user.profile.get_pfp_url }}" alt="Profile Image" />
-        <input type="file" id="pfp" name="pfp">
+        <textarea id="bio" name="bio">{{ user_profile.bio }}</textarea>
+        <div class="form-row">
+            <div class="form-col">
+                <label for="pfp">Profile Picture:</label>
+            <img id="profile-img" src="{{ user_profile.get_pfp_url }}" alt="Profile Image" />
+            </div>
+            <div class="form-col">
+                <input type="file" id="pfp" name="pfp">
+            </div>
+        </div>
+        {% if user.id == user_profile.user.id%}
+        <label for="current-password">Current Password:</label>
+        <input type="password" id="current-password" name="current-password" >
+        {% endif %}
+        <label for="new-password">New Password:</label>
+        <input type="password" id="new-password" name="new-password" >
+        <label for="confirm-password">Confirm New Password:</label>
+        <input type="password" id="confirm-password" name="confirm-password" >
+
         <button class="btn" type="submit">Save Changes</button>
     </form>
 </div>

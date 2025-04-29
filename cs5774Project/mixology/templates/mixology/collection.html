@@ -1,0 +1,51 @@
+{% extends '../base.html' %} {% load static %} {% block title %} Mixology -
+Collections {% endblock %} {% block stylesheet %}<link
+  rel="stylesheet"
+  href="{% static 'css/collections.css' %}"
+/>{% endblock %}
+{% block scripts %}<script src="{% static 'js/collection.js' %}"></script>{% endblock %}
+{% block content %}
+<div class="collection-container">
+  <div class="collection-header">
+    <h1>{{ collection.owner.user.username}}: {{ collection.name }}</h1>
+    <div>
+      {% if user.is_authenticated and collection.owner == user.profile or user.is_authenticated and user.is_superuser %}
+      <button class="btn" id="edit-btn" data-cid="{{ collection.id }}">Edit</button>
+      <button
+        class="btn btn-warn"
+        id="delete-collection-btn"
+        data-cid="{{ collection.id }}"
+        data-username="{{ collection.owner.user.username }}"
+        data-url="{% url 'mixology:delete-collection' %}">
+        Delete
+      </button>
+      {% endif %}
+    </div>
+  </div>
+  <div class="cards-container">
+    {% for drink in collection.drinks.all %}
+      <div class="card" href="/drink/{{ drink.id }}" data-drink-id="{{drink.id}}">
+        <img
+          class="card-img"
+          src="{{ drink.get_image_url }}"
+          alt="Drink Image"
+        />
+        <div class="card-content">
+          <h2>{{ drink.name }}</h2>
+          <a class="user-info" href="/profile/{{ drink.poster.user.username }}">
+            <img
+              class="icon user-icon"
+              src="{{ drink.poster.get_pfp_url }}"
+              alt="User Icon"
+            />
+            <p>{{ drink.poster.user.username }}</p>
+          </a>
+          <div class="view-more">
+            <a href="/drink/{{ drink.id }}"> View More &rarr; </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+  </div>
+</div>
+{% endblock %}

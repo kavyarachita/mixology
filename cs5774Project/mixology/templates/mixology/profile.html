@@ -7,22 +7,29 @@
 {% block scripts %}<script src="{% static 'js/profile.js' %}"></script>{% endblock %}
 {% block content %}
 <div class="profile-container">
+    {% if viewuser %}
     <div class="profile-header">
         <div class="profile-info">
             <img class="profile-img" src="{{ viewuser.get_pfp_url }}" alt="Profile Image" />
             <h1 class="profile-username">{{ viewuser.user.username }}</h1>
-            {% if user.is_authenticated and viewuser.user == user %}
-            <a class="btn edit-btn" href="/settings/">Settings</a>
-            {% elif user.is_authenticated %}
+            {% if user.is_authenticated and viewuser.user == user or user.is_authenticated and user.is_superuser %}
+            <a class="btn edit-btn" href="/settings/{{viewuser.id}}">User Settings</a>
+            {% endif %}
+            {% if user.is_authenticated and viewuser.user != user%}
             
             <button id="follow-btn" class="btn follow-btn" type="button" data-follow-uid="{{ viewuser.user.id }}" data-follow-url="{% url 'mixology:follow-user' %}">
-                {% if viewuser in user.get_following.all %}
+                {% if viewuser in user.profile.get_following.all %}
                 Unfollow
                 {% else %}
                 Follow
                 {% endif %}
             </button>
+            {% elif user.is_authenticated and viewuser.user == user %}
+            <button class="btn" id="user-activity-btn" data-uid="{{ user.id }}" data-url="{% url 'mixology:get-user-activity' %}">
+                Recent Activity
+            </button>
             {% endif %}
+            <a class="btn" href="/collections/{{ viewuser.user.username }}">Collections</a>
         </div>
         <p class="profile-bio">{{ viewuser.bio }}</p>
         <div class="profile-stats">
@@ -41,34 +48,28 @@
         </div>
     </div>
     <div class="profile-content">
-        <div class="tags-container">
-            <button class="btn tag">All</button>
-            <button class="btn tag">Recent</button>
-            <button class="btn tag">Oldest</button>
-        </div>
         <div class="cards-container">
             {% for drink in viewuser.get_drinks %}
                 <div class="card" href="/drink/{{ drink.id }}">
                     <img class="card-img" src="{{ drink.get_image_url }}" alt="Drink Image" />
                     <div class="card-content">
-                    <h2>{{ drink.name }}</h2>
-                    <div class="view-more">
-                        <a href="/drink/{{ drink.id }}">
-                            View More &rarr;
-                          </a>
-                        <div>
-                            <p>{{ drink.last_updated|naturalday }}</p>
-                            {% if user.is_authenticated and drink.poster.user == user or user.is_authenticated and user.is_superuser %}
-                            <form action="/edit-drink/{{ drink.id }}" method="get">
-                                <button type="submit">Edit</button>
-                            </form>
-                            {% endif %}
+                        <h2>{{ drink.name }}</h2>
+                        <div class="view-more">
+                            <a href="/drink/{{ drink.id }}">
+                                View More &rarr;
+                            </a>
+                            <div>
+                                <p>{{ drink.last_updated|naturalday }}</p>
+                                {% if user.is_authenticated and drink.poster.user == user or user.is_authenticated and user.is_superuser %}
+                                <a href="/edit-drink/{{ drink.id }}">Edit</a>
+                                {% endif %}
+                            </div>
                         </div>
-                    </div>
                     </div>
                 </div>
             {% endfor %}
         </div>
     </div>
+    {% endif %}
 </div>
 {% endblock %}

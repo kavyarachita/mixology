@@ -21,6 +21,24 @@
     align-items: center;
     gap: 10px;
     padding: 10px;
+    width: 100%;
+}
+
+.collection-header {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.create-collection-form input {
+    width: 100%;
+}
+
+.create-collection-form button {
+    width: auto;
 }
 
 @media screen and (max-width: 600px), screen and (max-height: 600px) {

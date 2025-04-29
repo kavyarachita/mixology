@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
     {% block stylesheet %}{% endblock %}
     <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'js/base.js' %}"></script>
     {% block scripts %}{% endblock %}
 </head>
 
@@ -21,7 +22,7 @@
             <div class="header-content">
                 <a class="logo-link" href="/">
                     <img src="{% static 'assets/logo-md.svg' %}" alt="Logo" />
-                    <h2 class="logo">Mixology</h2>
+                    {% comment %} <h2 class="logo">Mixology</h2> {% endcomment %}
                 </a>
                 <form class="search-form" method="GET" action="/search/">
                     <input type="text" class="search-bar" placeholder="Search..." name="query"/>
@@ -30,10 +31,16 @@
                     </button>
                 </form>
                 {% if user.is_authenticated %}
-                <a class="profile" href="/profile/{{user}}">
-                    <img class="icon profile-icon" src="{{ user.profile.get_pfp_url }}" alt="User Icon" />
-                    <p>{{ user.username }}</p>
-                </a>
+                <div class="user-actions">
+                    <button class="btn" id="activity-btn" data-uid="{{ user.id }}" data-url="{% url 'mixology:get-user-activity' %}">
+                        <img src="{% static 'assets/icons/notification.svg' %}" alt="Notification Icon" class="icon" />
+                        <p>Activity</p>
+                    </button>
+                    <a class="profile" href="/profile/{{user}}">
+                        <img class="icon profile-icon" src="{{ user.profile.get_pfp_url }}" alt="User Icon" />
+                        <p>{{ user.username }}</p>
+                    </a>
+                </div>
                 {% endif %}
                 
             </div>

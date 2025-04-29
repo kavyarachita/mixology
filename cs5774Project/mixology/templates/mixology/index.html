@@ -39,9 +39,7 @@
                         <div>
                             <p>{{ drink.last_updated|naturalday }}</p>
                             {% if user.is_authenticated and drink.poster.user == user or user.is_authenticated and user.is_superuser %}
-                            <form action="/edit-drink/{{ drink.id }}" method="get">
-                                <button type="submit">Edit</button>
-                            </form>
+                            <a href="/edit-drink/{{ drink.id }}">Edit</a>
                             {% endif %}
                         </div>
                     </div>

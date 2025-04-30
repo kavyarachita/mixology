@@ -4,3 +4,4 @@ images/
 icons/
 __pycache__/*
 
+*.json
